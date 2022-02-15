@@ -1,0 +1,12 @@
+#pragma once
+
+enum ACTIVATION
+{
+	LINEAR = 0,
+	BINARY_STEP,
+	SIGMOID,
+	TANH,
+	RELU,
+	LEAKY_RELU,
+	PARAMETRIC_RELU
+};
