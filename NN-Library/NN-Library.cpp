@@ -30,8 +30,6 @@ int main()
     y = ParametricReLUActivation(x, 0.1f);
     std::cout << "Parametric ReLU Activation - \nx: " << x << "\ny: " << y << "\n\n";
 
-    y = GeLUActivation(x);
-    std::cout << "GeLU Activation - \nx: " << x << "\ny: " << y << "\n\n";
 
 }
 
