@@ -1,5 +1,7 @@
 #include "pch.h"
 #include "../NN-Library/ActivationFunctions.h"
+#include "../NN-Library/ConnectedLayer.h"
+#include "../NN-Library/ConnectedLayer.cpp"
 
 static float Round(float a)
 {
@@ -31,8 +33,8 @@ TEST(ActivationFunctions, SigmoidActivation) {
 }
 
 TEST(ActivationFunctions, TanhActivation) {
-	EXPECT_EQ(Round(-0.905148f,6), Round(TanhActivation(-1.5f), 6));
-	EXPECT_EQ(Round(0.0f,6), Round(TanhActivation(0.0f), 6));
+	EXPECT_EQ(Round(-0.905148f, 6), Round(TanhActivation(-1.5f), 6));
+	EXPECT_EQ(Round(0.0f, 6), Round(TanhActivation(0.0f), 6));
 	EXPECT_EQ(Round(0.905148f, 6), Round(TanhActivation(1.5f), 6));
 }
 
@@ -52,6 +54,31 @@ TEST(ActivationFunctions, ParametricReLUActivation) {
 	EXPECT_EQ(-0.015f, ParametricReLUActivation(-1.5f, 0.01f));
 	EXPECT_EQ(0.0f, ParametricReLUActivation(0.0f, 0.01f));
 	EXPECT_EQ(1.5f, ParametricReLUActivation(1.5f, 0.01f));
+}
+
+TEST(ConnectedLayers, ConnectedLayer)
+{
+	std::vector<float> testInputs = { 34.5f };
+	std::vector<float> testWeights = { 1.2f, 0.04f, -25.0f };
+	std::vector<float> testBiases = { 32.0f };
+	int testNodes = 3;
+	ACTIVATION testActivation = ACTIVATION::RELU;
+	ConnectedLayer* cLayer = new ConnectedLayer(testInputs, testWeights, testBiases, testNodes, testActivation);
+	Layer testLayer = cLayer->GetLayer();
+	EXPECT_EQ(testInputs, testLayer.inputs);
+	EXPECT_EQ(testWeights, testLayer.weights);
+	EXPECT_EQ(testBiases, testLayer.biases);
+	EXPECT_EQ(testNodes, testLayer.nodes);
+	EXPECT_EQ(testActivation, testLayer.activation);
+}
+
+TEST(ConnectedLayers, SetInputs)
+{
+	std::vector<float> testInputs = { 34.5f };
+	ConnectedLayer* cLayer = new ConnectedLayer();
+	cLayer->SetInputs(testInputs);
+	Layer testLayer = cLayer->GetLayer();
+	EXPECT_EQ(testInputs, testLayer.inputs);
 }
 
 
