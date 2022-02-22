@@ -1,5 +1,9 @@
 #include "ConnectedLayer.h"
 
+ConnectedLayer::ConnectedLayer()
+{
+}
+
 ConnectedLayer::ConnectedLayer(std::vector<float> inputs, std::vector<float> weights, std::vector<float> biases, int nodes, ACTIVATION activation)
 {
 	layer.activation = activation;
@@ -33,4 +37,9 @@ void ConnectedLayer::SetInputs(std::vector<float> inputs)
 std::vector<float> ConnectedLayer::GetOutputs()
 {
 	return layer.outputs;
+}
+
+Layer ConnectedLayer::GetLayer()
+{
+	return layer;
 }

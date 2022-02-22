@@ -2,7 +2,7 @@
 #include <iostream>
 #include <vector>
 
-enum ACTIVATION
+enum class ACTIVATION
 {
 	LINEAR = 0,
 	BINARY_STEP,

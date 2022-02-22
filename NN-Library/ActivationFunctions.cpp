@@ -15,37 +15,37 @@ float ActivationFunction::Activate(float x)
 {
 	switch (activationType)
 	{
-		case LINEAR:
+	case ACTIVATION::LINEAR:
 		{
 			return LinearActivation(x);
 			break;
 		}
-		case BINARY_STEP:
+		case ACTIVATION::BINARY_STEP:
 		{
 			return BinaryStepActivation(x);
 			break;
 		}
-		case SIGMOID:
+		case ACTIVATION::SIGMOID:
 		{
 			return SigmoidActivation(x);
 			break;
 		}
-		case TANH:
+		case ACTIVATION::TANH:
 		{
 			return TanhActivation(x);
 			break;
 		}
-		case RELU:
+		case ACTIVATION::RELU:
 		{
 			return ReLUActivation(x);
 			break;
 		}
-		case LEAKY_RELU:
+		case ACTIVATION::LEAKY_RELU:
 		{
 			return LeakyReLUActivation(x);
 			break;
 		}
-		case PARAMETRIC_RELU:
+		case ACTIVATION::PARAMETRIC_RELU:
 		{
 			return ParametricReLUActivation(x, alpha);
 			break;

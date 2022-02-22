@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include "ActivationFunctions.h"
+#include "ConnectedLayer.h"
 
 int main()
 {
@@ -29,6 +30,13 @@ int main()
 
     y = ParametricReLUActivation(x, 0.1f);
     std::cout << "Parametric ReLU Activation - \nx: " << x << "\ny: " << y << "\n\n";
+
+    std::vector<float> testInputs = { 34.5f };
+    std::vector<float> testWeights = { 1.2f, 0.04f, -25.0f };
+    std::vector<float> testBiases = { 32.0f };
+    int testNodes = 3;
+    ACTIVATION testActivation = ACTIVATION::RELU;
+    ConnectedLayer* cLayer = new ConnectedLayer(testInputs, testWeights, testBiases, testNodes, testActivation);
 
 
 }
