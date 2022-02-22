@@ -140,10 +140,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ActivationFunctions.cpp" />
+    <ClCompile Include="ConnectedLayer.cpp" />
     <ClCompile Include="NN-Library.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ActivationFunctions.h" />
+    <ClInclude Include="ConnectedLayer.h" />
     <ClInclude Include="Constants.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
