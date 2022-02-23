@@ -22,7 +22,7 @@ void ConnectedLayer::CalculateOutputs()
 		float tempOutput = 0;
 		for (int j = 0; j < numOfWeightsPerNode; ++j)
 		{
-			tempOutput += layer.inputs[i + (i * j)] * layer.weights[i + (i * j)];
+			tempOutput += layer.inputs[j + (i * j)] * layer.weights[j + (i * j)];
 		}
 		tempOutput += layer.biases[i];
 		layer.outputs.push_back(tempOutput);
