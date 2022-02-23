@@ -13,9 +13,13 @@ static inline float ParametricReLUActivation(float x, float alpha) { return (x >
 
 class ActivationFunction
 {
+public:
 	ActivationFunction(ACTIVATION type);
 	ActivationFunction(ACTIVATION type, float a);
+
+	float Activate(float x);
+
+private:
 	ACTIVATION activationType;
 	float alpha;
-	float Activate(float x);
 };

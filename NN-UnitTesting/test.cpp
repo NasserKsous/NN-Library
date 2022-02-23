@@ -1,22 +1,11 @@
 #include "pch.h"
 #include "../NN-Library/ActivationFunctions.h"
+#include "../NN-Library/ActivationFunctions.cpp"
 #include "../NN-Library/ConnectedLayer.h"
 #include "../NN-Library/ConnectedLayer.cpp"
 
 namespace NeuralNetworkLibrary
 {
-	
-	static float Round(float a)
-	{
-		return (a > 0) ? ::floor(a + 0.5f) : ::ceil(a - 0.5f);
-	}
-	static float Round(float a, int places)
-	{
-		const float shift = pow(10.0f, places);
-
-		return Round(a * shift) / shift;
-	}
-
 	TEST(ActivationFunctions, LinearActivation) 
 	{
 		EXPECT_EQ(-1.5f, LinearActivation(-1.5f));
@@ -65,7 +54,7 @@ namespace NeuralNetworkLibrary
 		EXPECT_EQ(1.5f, ParametricReLUActivation(1.5f, 0.01f));
 	}
 
-	TEST(ConnectedLayers, ConnectedLayer)
+	TEST(ConnectedLayer, Constructor)
 	{
 		std::vector<float> testInputs = { 34.5f };
 		std::vector<float> testWeights = { 1.2f, 0.04f, -25.0f };
@@ -81,7 +70,7 @@ namespace NeuralNetworkLibrary
 		EXPECT_EQ(testActivation, testLayer.activation);
 	}
 
-	TEST(ConnectedLayers, SetInputs)
+	TEST(ConnectedLayers, SetInput)
 	{
 		std::vector<float> testInputs = { 34.5f };
 		ConnectedLayer* cLayer = new ConnectedLayer();
@@ -89,8 +78,16 @@ namespace NeuralNetworkLibrary
 		Layer testLayer = cLayer->GetLayer();
 		EXPECT_EQ(testInputs, testLayer.inputs);
 	}
+	TEST(ConnectedLayers, SetMultipleInputs)
+	{
+		std::vector<float> testInputs = { 34.5f, 10.5f, -2.0f };
+		ConnectedLayer* cLayer = new ConnectedLayer();
+		cLayer->SetInputs(testInputs);
+		Layer testLayer = cLayer->GetLayer();
+		EXPECT_EQ(testInputs, testLayer.inputs);
+	}
 
-	TEST(ConnectedLayers, CalculateOutputs)
+	TEST(ConnectedLayers, CalculateOutput)
 	{
 		std::vector<float> testInputs = { 34.5f, 23.2f, 0.23f };
 		std::vector<float> testWeights = { 1.2f, 0.04f, -25.0f };
@@ -105,6 +102,24 @@ namespace NeuralNetworkLibrary
 		std::vector<float> layerOutputs = cLayer->GetOutputs();
 
 		EXPECT_EQ(testOutputs, layerOutputs);
+	}
+	TEST(ConnectedLayers, CalculateMultipleOutputs)
+	{
+		std::vector<float> testInputs = { 34.5f, 23.2f, 0.23f };
+		std::vector<float> testWeights = { 1.2f, 0.04f, -25.0f, 3.1f, 35.06f, 0.0f, -12.22f, 1.74f, -67.0f };
+		std::vector<float> testBiases = { 32.0f, 54.0f, -1.0f };
+		int testNodes = 3;
+		ACTIVATION testActivation = ACTIVATION::RELU;
+
+		std::vector<float> testOutputs = { 68.578f, 974.342f, 0.0f }; 
+
+		ConnectedLayer* cLayer = new ConnectedLayer(testInputs, testWeights, testBiases, testNodes, testActivation);
+		cLayer->CalculateOutputs();
+		std::vector<float> layerOutputs = cLayer->GetOutputs();
+
+		EXPECT_FLOAT_EQ(testOutputs[0], layerOutputs[0]);
+		EXPECT_FLOAT_EQ(testOutputs[1], layerOutputs[1]);
+		EXPECT_FLOAT_EQ(testOutputs[2], layerOutputs[2]);
 	}
 }
 

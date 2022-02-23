@@ -1,6 +1,6 @@
 #pragma once
 #include "Constants.h"
-
+#include "ActivationFunctions.h"
 
 class ConnectedLayer
 {
@@ -15,5 +15,7 @@ public:
 
 private:
 	Layer layer;
+
+	float Activate(float input);
 };
 

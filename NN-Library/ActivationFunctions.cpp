@@ -3,6 +3,7 @@
 ActivationFunction::ActivationFunction(ACTIVATION type)
 {
 	activationType = type;
+	alpha = 0.0f;
 }
 
 ActivationFunction::ActivationFunction(ACTIVATION type, float a)

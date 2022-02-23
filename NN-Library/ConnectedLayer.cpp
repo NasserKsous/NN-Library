@@ -22,9 +22,11 @@ void ConnectedLayer::CalculateOutputs()
 		float tempOutput = 0;
 		for (int j = 0; j < numOfWeightsPerNode; ++j)
 		{
-			tempOutput += layer.inputs[j + (i * j)] * layer.weights[j + (i * j)];
+			tempOutput += layer.inputs[j] * layer.weights[j + (i * numOfWeightsPerNode)];
 		}
 		tempOutput += layer.biases[i];
+		ActivationFunction activeFunc(layer.activation);
+		tempOutput = activeFunc.Activate(tempOutput);
 		layer.outputs.push_back(tempOutput);
 	}
 }
@@ -42,4 +44,9 @@ std::vector<float> ConnectedLayer::GetOutputs()
 Layer ConnectedLayer::GetLayer()
 {
 	return layer;
+}
+
+float ConnectedLayer::Activate(float input)
+{
+	return 0.0f;
 }

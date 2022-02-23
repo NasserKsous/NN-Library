@@ -7,39 +7,6 @@
 
 int main()
 {
-    float x = 1.5f;
-    float y = 0.0f;
-
-    y = LinearActivation(x);
-    std::cout << "Linear Activation - \nx: " << x << "\ny: " << y << "\n\n";
-
-    y = BinaryStepActivation(x);
-    std::cout << "Binary Step Activation - \nx: " << x << "\ny: " << y << "\n\n";
-
-    y = SigmoidActivation(x);
-    std::cout << "Sigmoid Activation - \nx: " << x << "\ny: " << y << "\n\n";
-
-    y = TanhActivation(x);
-    std::cout << "Tanh Activation - \nx: " << x << "\ny: " << y << "\n\n";
-
-    y = ReLUActivation(x);
-    std::cout << "ReLU Activation - \nx: " << x << "\ny: " << y << "\n\n";
-
-    y = LeakyReLUActivation(x);
-    std::cout << "Leaky ReLU Activation - \nx: " << x << "\ny: " << y << "\n\n";
-
-    y = ParametricReLUActivation(x, 0.1f);
-    std::cout << "Parametric ReLU Activation - \nx: " << x << "\ny: " << y << "\n\n";
-
-    std::vector<float> testInputs = { 34.5f, 23.2f, 0.23f };
-    std::vector<float> testWeights = { 1.2f, 0.04f, -25.0f };
-    std::vector<float> testBiases = { 32.0f };
-    int testNodes = 1;
-    ACTIVATION testActivation = ACTIVATION::RELU;
-    ConnectedLayer* cLayer = new ConnectedLayer(testInputs, testWeights, testBiases, testNodes, testActivation);
-    cLayer->CalculateOutputs();
-    std::vector<float> output = cLayer->GetOutputs();
-
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
