@@ -13,6 +13,8 @@ enum class ACTIVATION
 	PARAMETRIC_RELU
 };
 
+
+
 struct Layer
 {
 	std::vector<float> inputs;
@@ -21,4 +23,9 @@ struct Layer
 	std::vector<float> biases;
 	int nodes;
 	ACTIVATION activation;
+
+	virtual void CalculateOutputs()
+	{
+
+	}
 };

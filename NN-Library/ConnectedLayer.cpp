@@ -4,46 +4,42 @@ ConnectedLayer::ConnectedLayer()
 {
 }
 
-ConnectedLayer::ConnectedLayer(std::vector<float> inputs, std::vector<float> weights, std::vector<float> biases, int nodes, ACTIVATION activation)
+ConnectedLayer::ConnectedLayer(std::vector<float> in, std::vector<float> wei, std::vector<float> bi, int no, ACTIVATION act)
 {
-	layer.activation = activation;
-	layer.inputs = inputs;
-	layer.biases = biases;
-	layer.weights = weights;
-	layer.nodes = nodes;
+	activation = act;
+	inputs = in;
+	biases = bi;
+	weights = wei;
+	nodes = no;
+
 }
 
 void ConnectedLayer::CalculateOutputs()
 {
-	int numberOfWeights = layer.weights.size();
-	int numOfWeightsPerNode = numberOfWeights / layer.nodes;
-	for (int i = 0; i < layer.nodes; ++i)
+	int numberOfWeights = weights.size();
+	int numOfWeightsPerNode = numberOfWeights / nodes;
+	for (int i = 0; i < nodes; ++i)
 	{
 		float tempOutput = 0;
 		for (int j = 0; j < numOfWeightsPerNode; ++j)
 		{
-			tempOutput += layer.inputs[j] * layer.weights[j + (i * numOfWeightsPerNode)];
+			tempOutput += inputs[j] * weights[j + (i * numOfWeightsPerNode)];
 		}
-		tempOutput += layer.biases[i];
-		ActivationFunction activeFunc(layer.activation);
+		tempOutput += biases[i];
+		ActivationFunction activeFunc(activation);
 		tempOutput = activeFunc.Activate(tempOutput);
-		layer.outputs.push_back(tempOutput);
+		outputs.push_back(tempOutput);
 	}
 }
 
-void ConnectedLayer::SetInputs(std::vector<float> inputs)
+void ConnectedLayer::SetInputs(std::vector<float> in)
 {
-	layer.inputs = inputs;
+	inputs = in;
 }
 
 std::vector<float> ConnectedLayer::GetOutputs()
 {
-	return layer.outputs;
-}
-
-Layer ConnectedLayer::GetLayer()
-{
-	return layer;
+	return outputs;
 }
 
 float ConnectedLayer::Activate(float input)

@@ -62,12 +62,11 @@ namespace NeuralNetworkLibrary
 		int testNodes = 1;
 		ACTIVATION testActivation = ACTIVATION::RELU;
 		ConnectedLayer* cLayer = new ConnectedLayer(testInputs, testWeights, testBiases, testNodes, testActivation);
-		Layer testLayer = cLayer->GetLayer();
-		EXPECT_EQ(testInputs, testLayer.inputs);
-		EXPECT_EQ(testWeights, testLayer.weights);
-		EXPECT_EQ(testBiases, testLayer.biases);
-		EXPECT_EQ(testNodes, testLayer.nodes);
-		EXPECT_EQ(testActivation, testLayer.activation);
+		EXPECT_EQ(testInputs, cLayer->inputs);
+		EXPECT_EQ(testWeights, cLayer->weights);
+		EXPECT_EQ(testBiases, cLayer->biases);
+		EXPECT_EQ(testNodes, cLayer->nodes);
+		EXPECT_EQ(testActivation, cLayer->activation);
 	}
 
 	TEST(ConnectedLayers, SetInput)
@@ -75,16 +74,14 @@ namespace NeuralNetworkLibrary
 		std::vector<float> testInputs = { 34.5f };
 		ConnectedLayer* cLayer = new ConnectedLayer();
 		cLayer->SetInputs(testInputs);
-		Layer testLayer = cLayer->GetLayer();
-		EXPECT_EQ(testInputs, testLayer.inputs);
+		EXPECT_EQ(testInputs, cLayer->inputs);
 	}
 	TEST(ConnectedLayers, SetMultipleInputs)
 	{
 		std::vector<float> testInputs = { 34.5f, 10.5f, -2.0f };
 		ConnectedLayer* cLayer = new ConnectedLayer();
 		cLayer->SetInputs(testInputs);
-		Layer testLayer = cLayer->GetLayer();
-		EXPECT_EQ(testInputs, testLayer.inputs);
+		EXPECT_EQ(testInputs, cLayer->inputs);
 	}
 
 	TEST(ConnectedLayers, CalculateOutput)

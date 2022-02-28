@@ -17,8 +17,11 @@ void NeuralNetwork::SetInputs(std::vector<float> inputs)
 
 void NeuralNetwork::CalculateOutputs()
 {
+	std::vector<float> inputs = Network[0].inputs;
 	for (int i = 0; i < numberOfLayers; ++i)
 	{
-		Network[0].
+		Network[i].CalculateOutputs();
+		inputs = Network[i].outputs;
 	}
+	outputs = inputs;
 }

@@ -2,20 +2,17 @@
 #include "Constants.h"
 #include "ActivationFunctions.h"
 
-class ConnectedLayer
+class ConnectedLayer : public Layer
 {
 public:
 	ConnectedLayer();
-	ConnectedLayer(std::vector<float> inputs, std::vector<float> weights, std::vector<float>biases, int nodes, ACTIVATION activation);
+	ConnectedLayer(std::vector<float> in, std::vector<float> wei, std::vector<float> bi, int no, ACTIVATION act);
 
 	void CalculateOutputs();
-	void SetInputs(std::vector<float> inputs);
+	void SetInputs(std::vector<float> in);
 	std::vector<float> GetOutputs();
-	Layer GetLayer();
 
 private:
-	Layer layer;
-
 	float Activate(float input);
 };
 
