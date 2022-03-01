@@ -16,10 +16,17 @@ int main()
 	ACTIVATION testActivation = ACTIVATION::RELU;
 	ConnectedLayer* cLayer = new ConnectedLayer(testInputs, testWeights, testBiases, testNodes, testActivation);
 
-	std::vector<float> testOutputs = { 68.578f, 974.342f, 0.0f };
+	testWeights = { 7.0f, 0.4f, -5.0f, -23.1f, 0.06f, 24.0f };
+	testBiases = { 12.0f, 4.0f };
+	testNodes = 2;
+	testActivation = ACTIVATION::RELU;
+	ConnectedLayer* cLayer2 = new ConnectedLayer(testInputs, testWeights, testBiases, testNodes, testActivation);
+
+	std::vector<float> testOutputs = { 881.7828f, 0.0f, 0.0f };
 
 	NeuralNetwork* nn = new NeuralNetwork();
 	nn->AddLayer(cLayer);
+	nn->AddLayer(cLayer2);
 	nn->CalculateOutputs();
 	std::vector<Layer*> testNN = nn->GetNetwork();
 }

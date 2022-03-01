@@ -31,6 +31,7 @@ void NeuralNetwork::CalculateOutputs()
 	std::vector<float> inputs = Network[0]->inputs;
 	for (int i = 0; i < numberOfLayers; ++i)
 	{
+		Network[i]->inputs = inputs;
 		Network[i]->CalculateOutputs();
 		inputs = Network[i]->outputs;
 	}
@@ -40,6 +41,11 @@ void NeuralNetwork::CalculateOutputs()
 int NeuralNetwork::GetNumberOfLayers()
 {
 	return numberOfLayers;
+}
+
+std::vector<float> NeuralNetwork::GetOutputs()
+{
+	return outputs;
 }
 
 std::vector<Layer*> NeuralNetwork::GetNetwork()

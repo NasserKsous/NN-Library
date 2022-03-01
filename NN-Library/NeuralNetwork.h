@@ -11,6 +11,7 @@ public:
 	void SetInputs(std::vector<float> inputs);
 	void CalculateOutputs();
 	int GetNumberOfLayers();
+	std::vector<float> GetOutputs();
 	std::vector<Layer*> GetNetwork();
 
 private:
