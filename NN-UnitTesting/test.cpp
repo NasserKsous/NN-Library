@@ -3,6 +3,8 @@
 #include "../NN-Library/ActivationFunctions.cpp"
 #include "../NN-Library/ConnectedLayer.h"
 #include "../NN-Library/ConnectedLayer.cpp"
+#include "../NN-Library/NeuralNetwork.h"
+#include "../NN-Library/NeuralNetwork.cpp"
 
 namespace NeuralNetworkLibrary
 {
@@ -100,6 +102,7 @@ namespace NeuralNetworkLibrary
 
 		EXPECT_EQ(testOutputs, layerOutputs);
 	}
+
 	TEST(ConnectedLayers, CalculateMultipleOutputs)
 	{
 		std::vector<float> testInputs = { 34.5f, 23.2f, 0.23f };
@@ -118,6 +121,107 @@ namespace NeuralNetworkLibrary
 		EXPECT_FLOAT_EQ(testOutputs[1], layerOutputs[1]);
 		EXPECT_FLOAT_EQ(testOutputs[2], layerOutputs[2]);
 	}
+
+	TEST(NeuralNetwork, Constructor)
+	{
+		NeuralNetwork* nn = new NeuralNetwork();
+		EXPECT_EQ(0, nn->GetNumberOfLayers());
+	}
+
+	TEST(NeuralNetwork, AddLayer)
+	{
+		std::vector<float> testInputs = { 34.5f, 23.2f, 0.23f };
+		std::vector<float> testWeights = { 1.2f, 0.04f, -25.0f, 3.1f, 35.06f, 0.0f, -12.22f, 1.74f, -67.0f };
+		std::vector<float> testBiases = { 32.0f, 54.0f, -1.0f };
+		int testNodes = 3;
+		ACTIVATION testActivation = ACTIVATION::RELU;
+		ConnectedLayer* cLayer = new ConnectedLayer(testInputs, testWeights, testBiases, testNodes, testActivation);
+
+		NeuralNetwork* nn = new NeuralNetwork();
+		nn->AddLayer(cLayer);
+		std::vector<Layer*> testNN = nn->GetNetwork();
+		EXPECT_EQ(testInputs, testNN[0]->inputs);
+		EXPECT_EQ(testWeights, testNN[0]->weights);
+		EXPECT_EQ(testBiases, testNN[0]->biases);
+		EXPECT_EQ(testNodes, testNN[0]->nodes);
+		EXPECT_EQ(testActivation, testNN[0]->activation);
+		EXPECT_EQ(nn->GetNumberOfLayers(), 1);
+	}
+	
+	TEST(NeuralNetwork, SetInputsWithNoLayer)
+	{
+		std::vector<float> testInputs = { 34.5f, 23.2f, 0.23f };
+		NeuralNetwork* nn = new NeuralNetwork();
+		ASSERT_DEATH(nn->SetInputs(testInputs), "There are no layers to set inputs for.");
+	}
+	TEST(NeuralNetwork, SetInputs)
+	{
+		std::vector<float> testInputs = { 34.5f, 23.2f, 0.23f };
+		std::vector<float> testWeights = { 1.2f, 0.04f, -25.0f, 3.1f, 35.06f, 0.0f, -12.22f, 1.74f, -67.0f };
+		std::vector<float> testBiases = { 32.0f, 54.0f, -1.0f };
+		int testNodes = 3;
+		ACTIVATION testActivation = ACTIVATION::RELU;
+		ConnectedLayer* cLayer = new ConnectedLayer(testInputs, testWeights, testBiases, testNodes, testActivation);
+
+		std::vector<float> newInputs = { 23.44f, 0.05f, 102.0f };
+		NeuralNetwork* nn = new NeuralNetwork();
+		nn->AddLayer(cLayer);
+		nn->SetInputs(newInputs);
+
+		std::vector<Layer*> testNN = nn->GetNetwork();
+		
+		EXPECT_EQ(newInputs, testNN[0]->inputs);
+	}
+
+	TEST(NeuralNetwork, CalculateOutputsWithNoLayer)
+	{
+		std::vector<float> testInputs = { 34.5f, 23.2f, 0.23f };
+		NeuralNetwork* nn = new NeuralNetwork();
+		ASSERT_DEATH(nn->CalculateOutputs(), "There are no layers to calculate outputs for.");
+	}
+
+	TEST(NeuralNetwork, CalculateOutputsWithOneLayer)
+	{
+		std::vector<float> testInputs = { 34.5f, 23.2f, 0.23f };
+		std::vector<float> testWeights = { 1.2f, 0.04f, -25.0f, 3.1f, 35.06f, 0.0f, -12.22f, 1.74f, -67.0f };
+		std::vector<float> testBiases = { 32.0f, 54.0f, -1.0f };
+		int testNodes = 3;
+		ACTIVATION testActivation = ACTIVATION::RELU;
+		ConnectedLayer* cLayer = new ConnectedLayer(testInputs, testWeights, testBiases, testNodes, testActivation);
+
+		std::vector<float> testOutputs = { 68.578f, 974.342f, 0.0f };
+
+		NeuralNetwork* nn = new NeuralNetwork();
+		nn->AddLayer(cLayer);
+		nn->CalculateOutputs();
+		std::vector<Layer*> testNN = nn->GetNetwork();
+
+		EXPECT_FLOAT_EQ(testOutputs[0], testNN[0]->outputs[0]);
+		EXPECT_FLOAT_EQ(testOutputs[1], testNN[0]->outputs[1]);
+		EXPECT_FLOAT_EQ(testOutputs[2], testNN[0]->outputs[2]);
+	}
+	
+	TEST(NeuralNetwork, CalculateOutputsWithMultipleLayers) //WORK ON THIS
+	{
+		std::vector<float> testInputs = { 34.5f, 23.2f, 0.23f };
+		std::vector<float> testWeights = { 1.2f, 0.04f, -25.0f, 3.1f, 35.06f, 0.0f, -12.22f, 1.74f, -67.0f };
+		std::vector<float> testBiases = { 32.0f, 54.0f, -1.0f };
+		int testNodes = 3;
+		ACTIVATION testActivation = ACTIVATION::RELU;
+		ConnectedLayer* cLayer = new ConnectedLayer(testInputs, testWeights, testBiases, testNodes, testActivation);
+
+		std::vector<float> testOutputs = { 68.578f, 974.342f, 0.0f };
+
+		NeuralNetwork* nn = new NeuralNetwork();
+		nn->AddLayer(cLayer);
+		nn->CalculateOutputs();
+		std::vector<Layer*> testNN = nn->GetNetwork();
+
+		EXPECT_FLOAT_EQ(testOutputs[0], testNN[0]->outputs[0]);
+		EXPECT_FLOAT_EQ(testOutputs[1], testNN[0]->outputs[1]);
+		EXPECT_FLOAT_EQ(testOutputs[2], testNN[0]->outputs[2]);
+	}
+	
 }
 
 

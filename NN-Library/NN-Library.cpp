@@ -4,9 +4,24 @@
 #include <iostream>
 #include "ActivationFunctions.h"
 #include "ConnectedLayer.h"
+#include "NeuralNetwork.h"
+#include "Constants.h"
 
 int main()
 {
+	std::vector<float> testInputs = { 34.5f, 23.2f, 0.23f };
+	std::vector<float> testWeights = { 1.2f, 0.04f, -25.0f, 3.1f, 35.06f, 0.0f, -12.22f, 1.74f, -67.0f };
+	std::vector<float> testBiases = { 32.0f, 54.0f, -1.0f };
+	int testNodes = 3;
+	ACTIVATION testActivation = ACTIVATION::RELU;
+	ConnectedLayer* cLayer = new ConnectedLayer(testInputs, testWeights, testBiases, testNodes, testActivation);
+
+	std::vector<float> testOutputs = { 68.578f, 974.342f, 0.0f };
+
+	NeuralNetwork* nn = new NeuralNetwork();
+	nn->AddLayer(cLayer);
+	nn->CalculateOutputs();
+	std::vector<Layer*> testNN = nn->GetNetwork();
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu

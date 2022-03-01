@@ -15,8 +15,9 @@ enum class ACTIVATION
 
 
 
-struct Layer
+class Layer
 {
+public:
 	std::vector<float> inputs;
 	std::vector<float> outputs;
 	std::vector<float> weights;
@@ -24,8 +25,5 @@ struct Layer
 	int nodes;
 	ACTIVATION activation;
 
-	virtual void CalculateOutputs()
-	{
-
-	}
+	virtual void CalculateOutputs() {};
 };
