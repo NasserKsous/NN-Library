@@ -1,6 +1,9 @@
 #include "NeuralNetwork.h"
 #include <assert.h>
 
+//Reference for back-prop: https://blog.demofox.org/2017/03/09/how-to-train-neural-networks-with-backpropagation/
+
+
 NeuralNetwork::NeuralNetwork()
 {
 	numberOfLayers = 0;
