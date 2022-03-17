@@ -41,6 +41,29 @@ void NeuralNetwork::CalculateOutputs()
 	outputs = inputs;
 }
 
+void NeuralNetwork::BackPropagate(std::vector<float> expectedOutputs)
+{
+	cost = 0.0f;
+	int numberOfOutputs = outputs.size();
+	for (int i = 0; i < numberOfOutputs; ++i)
+	{
+		cost += (expectedOutputs[i] - outputs[i]) * (expectedOutputs[i] - outputs[i]);
+	}
+	cost /= numberOfOutputs;
+
+	for (int i = numberOfLayers - 1; i >= 0; --i)
+	{
+		Network[i]->BackPropagate(expectedOutputs);
+	}
+	
+	for (int i = numberOfLayers - 1; i >= 0; --i)
+	{
+		Network[i]->UpdateWeightsAndBiases();
+	}
+
+
+}
+
 int NeuralNetwork::GetNumberOfLayers()
 {
 	return numberOfLayers;
@@ -54,4 +77,9 @@ std::vector<float> NeuralNetwork::GetOutputs()
 std::vector<Layer*> NeuralNetwork::GetNetwork()
 {
 	return Network;
+}
+
+float NeuralNetwork::GetCost()
+{
+	return cost;
 }

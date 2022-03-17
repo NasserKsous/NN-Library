@@ -26,4 +26,6 @@ public:
 	ACTIVATION activation;
 
 	virtual void CalculateOutputs() {};
+	virtual void BackPropagate(std::vector<float> expectedOutputs) {};
+	virtual void UpdateWeightsAndBiases() {};
 };

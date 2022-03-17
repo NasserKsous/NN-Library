@@ -9,12 +9,15 @@ public:
 	ConnectedLayer(std::vector<float> in, std::vector<float> wei, std::vector<float> bi, int no, ACTIVATION act);
 
 	void CalculateOutputs() override;
+	void BackPropagate(std::vector<float> expectedOutputs) override;
 	void SetInputs(std::vector<float> in);
 	std::vector<float> GetOutputs();
+	void UpdateWeightsAndBiases() override;
 
 private:
 	float Activate(float input);
 
-	int yeet = 1;
+	std::vector<float> weightsCosts;
+	std::vector<float> biasesCosts;
 };
 
