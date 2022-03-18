@@ -51,10 +51,15 @@ void NeuralNetwork::BackPropagate(std::vector<float> expectedOutputs)
 	}
 	cost /= numberOfOutputs;
 
-	for (int i = numberOfLayers - 1; i >= 0; --i)
+
+	Network[numberOfLayers - 1]->BackPropagate(expectedOutputs);
+
+	for (int i = numberOfLayers - 2; i >= 0; --i)
 	{
-		Network[i]->BackPropagate(expectedOutputs);
+		Network[i]->BackPropagate(Network[i+1]->GetBiasCosts(), Network[i + 1]->weights);
 	}
+
+
 	
 	for (int i = numberOfLayers - 1; i >= 0; --i)
 	{

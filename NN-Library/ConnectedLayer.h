@@ -10,9 +10,11 @@ public:
 
 	void CalculateOutputs() override;
 	void BackPropagate(std::vector<float> expectedOutputs) override;
+	void BackPropagate(std::vector<float> previousBiasCosts, std::vector<float> previousWeightCosts) override;
 	void SetInputs(std::vector<float> in);
-	std::vector<float> GetOutputs();
 	void UpdateWeightsAndBiases() override;
+	std::vector<float> GetBiasCosts() override;
+	std::vector<float> GetWeightCosts() override;
 
 private:
 	float Activate(float input);

@@ -27,5 +27,8 @@ public:
 
 	virtual void CalculateOutputs() {};
 	virtual void BackPropagate(std::vector<float> expectedOutputs) {};
+	virtual void BackPropagate(std::vector<float> previousBiasCosts, std::vector<float> previousWeightCosts) {};
 	virtual void UpdateWeightsAndBiases() {};
+	virtual std::vector<float> GetBiasCosts() { return std::vector<float>(); };
+	virtual std::vector<float> GetWeightCosts() { return std::vector<float>(); };
 };

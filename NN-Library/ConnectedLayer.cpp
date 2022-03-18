@@ -62,14 +62,44 @@ void ConnectedLayer::BackPropagate(std::vector<float> expectedOutputs)
 
 }
 
+void ConnectedLayer::BackPropagate(std::vector<float> previousBiasCosts, std::vector<float> previousWeights)
+{
+	biasesCosts.clear();
+	weightsCosts.clear();
+
+
+	int numberOfWeights = weights.size();
+	int numOfWeightsPerNode = numberOfWeights / nodes;
+
+	for (int neuronIndex = 0; neuronIndex < nodes; ++neuronIndex)
+	{
+		//Update Bias 
+		float costOfNextNeurons = 0.0f;
+
+		float numOfWeightsPerNode2 = previousWeights.size() / previousBiasCosts.size();
+
+		for (int i = 0; i < previousBiasCosts.size(); ++i)
+		{
+			costOfNextNeurons += previousBiasCosts[i] * previousWeights[i * numOfWeightsPerNode2 + neuronIndex];
+		}
+
+		float temp2 = outputs[neuronIndex] * (1.0f - outputs[neuronIndex]);
+		float biasCost = costOfNextNeurons * temp2;
+		biasesCosts.push_back(biasCost);
+
+		//Update Weigths
+
+		for (int i = 0; i < numOfWeightsPerNode; ++i)
+		{
+			float weightCost = biasCost * inputs[i];
+			weightsCosts.push_back(weightCost);
+		}
+	}
+}
+
 void ConnectedLayer::SetInputs(std::vector<float> in)
 {
 	inputs = in;
-}
-
-std::vector<float> ConnectedLayer::GetOutputs()
-{
-	return outputs;
 }
 
 void ConnectedLayer::UpdateWeightsAndBiases()
@@ -90,6 +120,16 @@ void ConnectedLayer::UpdateWeightsAndBiases()
 			weights[i + (neuronIndex * numOfWeightsPerNode)] -= learningRate * weightsCosts[i + (neuronIndex * numOfWeightsPerNode)];
 		}
 	}
+}
+
+std::vector<float> ConnectedLayer::GetBiasCosts()
+{
+	return biasesCosts;
+}
+
+std::vector<float> ConnectedLayer::GetWeightCosts()
+{
+	return weightsCosts;
 }
 
 float ConnectedLayer::Activate(float input)

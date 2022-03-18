@@ -31,7 +31,7 @@ int main()
 	std::vector<float> outputs;
 	float cost = 0.0f;
 
-	for (int i = 0; i < 100; ++i)
+	for (int i = 0; i < 10000; ++i)
 	{
 		nn->CalculateOutputs();
 		nn->BackPropagate(expectedOutputs);

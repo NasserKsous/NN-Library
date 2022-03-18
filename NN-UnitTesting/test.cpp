@@ -98,7 +98,7 @@ namespace NeuralNetworkLibrary
 
 		ConnectedLayer* cLayer = new ConnectedLayer(testInputs, testWeights, testBiases, testNodes, testActivation);
 		cLayer->CalculateOutputs();
-		std::vector<float> layerOutputs = cLayer->GetOutputs();
+		std::vector<float> layerOutputs = cLayer->outputs;
 
 		EXPECT_EQ(testOutputs, layerOutputs);
 	}
@@ -115,7 +115,7 @@ namespace NeuralNetworkLibrary
 
 		ConnectedLayer* cLayer = new ConnectedLayer(testInputs, testWeights, testBiases, testNodes, testActivation);
 		cLayer->CalculateOutputs();
-		std::vector<float> layerOutputs = cLayer->GetOutputs();
+		std::vector<float> layerOutputs = cLayer->outputs;
 
 		EXPECT_FLOAT_EQ(testOutputs[0], layerOutputs[0]);
 		EXPECT_FLOAT_EQ(testOutputs[1], layerOutputs[1]);
