@@ -10,6 +10,32 @@
 #include "pbPlots.hpp"
 #include "supportLib.hpp"
 
+void PlotGraph(std::vector<double> x, std::vector<double> y, std::string fileName)
+{
+	bool success;
+	StringReference* errorMessage = new StringReference();
+
+	RGBABitmapImageReference* imageReference = CreateRGBABitmapImageReference();
+
+	success = DrawScatterPlot(imageReference, 600, 400, &x, &y, errorMessage);
+
+	if (success)
+	{
+		std::vector<double>* pngdata = ConvertToPNG(imageReference->image);
+		WriteToFile(pngdata, fileName);
+		DeleteImage(imageReference->image);
+	}
+	else
+	{
+		std::cerr << "Error: ";
+		for (wchar_t c : *errorMessage->string)
+		{
+			std::wcerr << c;
+		}
+		std::cerr << std::endl;
+	}
+}
+
 int main()
 {
 	std::vector<float> testInputs = { 0.05f, 0.1f };
@@ -32,11 +58,13 @@ int main()
 	nn->AddLayer(cLayer2);
 
 
-	const int iterations = 10000;
+	const int iterations = 1000;
 	std::vector<float> outputs;
 	float cost = 0.0f;
 	std::vector<double> outputCosts;
 	std::vector<double> outputIterations;
+	std::vector<double> outputOutputs;
+	std::vector<double> outputOutputs2;
 
 	for (int i = 0; i < iterations; ++i)
 	{
@@ -48,32 +76,16 @@ int main()
 		outputs = nn->GetOutputs();
 
 		std::cout << "Output 0 = " << outputs[0] << "\nOutput 1 = " << outputs[1] << "\nCost = " << cost << "\n\n";
+		outputOutputs.push_back(outputs[0]);
+		outputOutputs2.push_back(outputs[1]);
 	}
 
-	bool success;
-	StringReference* errorMessage = new StringReference();
+	
+	PlotGraph(outputIterations, outputCosts, "OutputCostOverTime.png");
+	PlotGraph(outputIterations, outputOutputs, "OutputOneOverTime.png");
+	PlotGraph(outputIterations, outputOutputs2, "OutputTwoOverTime.png");
 
-	RGBABitmapImageReference* imageReference = CreateRGBABitmapImageReference();
-
-	success = DrawScatterPlot(imageReference, 600, 400, &outputIterations, &outputCosts, errorMessage);
-
-	if (success)
-	{
-		std::vector<double>* pngdata = ConvertToPNG(imageReference->image);
-		WriteToFile(pngdata, "CostOverTime.png");
-		DeleteImage(imageReference->image);
-	}
-	else 
-	{
-		std::cerr << "Error: ";
-		for (wchar_t c : *errorMessage->string) 
-		{
-			std::wcerr << c;
-		}
-		std::cerr << std::endl;
-	}
-
-	return success ? 0 : 1;
+	return 0;
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
