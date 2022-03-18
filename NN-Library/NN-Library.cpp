@@ -7,6 +7,9 @@
 #include "NeuralNetwork.h"
 #include "Constants.h"
 
+#include "pbPlots.hpp"
+#include "supportLib.hpp"
+
 int main()
 {
 	std::vector<float> testInputs = { 0.05f, 0.1f };
@@ -28,21 +31,49 @@ int main()
 	nn->AddLayer(cLayer);
 	nn->AddLayer(cLayer2);
 
+
+	const int iterations = 10000;
 	std::vector<float> outputs;
 	float cost = 0.0f;
+	std::vector<double> outputCosts;
+	std::vector<double> outputIterations;
 
-	for (int i = 0; i < 10000; ++i)
+	for (int i = 0; i < iterations; ++i)
 	{
 		nn->CalculateOutputs();
 		nn->BackPropagate(expectedOutputs);
 		cost = nn->GetCost();
+		outputCosts.push_back(cost);
+		outputIterations.push_back(double(i + 1));
 		outputs = nn->GetOutputs();
 
 		std::cout << "Output 0 = " << outputs[0] << "\nOutput 1 = " << outputs[1] << "\nCost = " << cost << "\n\n";
 	}
 
-	
-	std::vector<Layer*> testNN = nn->GetNetwork();
+	bool success;
+	StringReference* errorMessage = new StringReference();
+
+	RGBABitmapImageReference* imageReference = CreateRGBABitmapImageReference();
+
+	success = DrawScatterPlot(imageReference, 600, 400, &outputIterations, &outputCosts, errorMessage);
+
+	if (success)
+	{
+		std::vector<double>* pngdata = ConvertToPNG(imageReference->image);
+		WriteToFile(pngdata, "CostOverTime.png");
+		DeleteImage(imageReference->image);
+	}
+	else 
+	{
+		std::cerr << "Error: ";
+		for (wchar_t c : *errorMessage->string) 
+		{
+			std::wcerr << c;
+		}
+		std::cerr << std::endl;
+	}
+
+	return success ? 0 : 1;
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu

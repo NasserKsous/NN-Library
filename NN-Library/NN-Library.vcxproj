@@ -143,12 +143,16 @@
     <ClCompile Include="ConnectedLayer.cpp" />
     <ClCompile Include="NeuralNetwork.cpp" />
     <ClCompile Include="NN-Library.cpp" />
+    <ClCompile Include="pbPlots.cpp" />
+    <ClCompile Include="supportLib.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ActivationFunctions.h" />
     <ClInclude Include="ConnectedLayer.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="NeuralNetwork.h" />
+    <ClInclude Include="pbPlots.hpp" />
+    <ClInclude Include="supportLib.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
