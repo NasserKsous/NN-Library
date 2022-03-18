@@ -85,6 +85,10 @@ int main()
 	PlotGraph(outputIterations, outputOutputs, "OutputOneOverTime.png");
 	PlotGraph(outputIterations, outputOutputs2, "OutputTwoOverTime.png");
 
+	system("OutputCostOverTime.png");
+	system("OutputOneOverTime.png");
+	system("OutputTwoOverTime.png");
+
 	return 0;
 }
 
