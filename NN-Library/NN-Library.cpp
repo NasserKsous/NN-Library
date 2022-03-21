@@ -40,27 +40,28 @@ void PlotGraph(std::vector<double> x, std::vector<double> y, std::string fileNam
 
 int main()
 {
-	std::vector<float> testInputs = { 0.05f, 0.1f };
-	std::vector<float> testWeights = { 0.15f, 0.2f, 0.25f, 0.3f };
-	std::vector<float> testBiases = { 0.35f, 0.35f };
-	std::vector<float> expectedOutputs = { 0.01f, 0.99f };
+	std::vector<float> testInputs = { 0.0f, 0.0f };
+	std::vector<float> testWeights = { 0.2f, 0.8f, 0.6f, 0.4f };
+	std::vector<float> testBiases = { 0.5f, 0.1f };
+	std::vector<float> expectedOutputs = { 0.0f, 0.0f };
 	int testNodes = 2;
+	int sets = 4;
 	ACTIVATION testActivation = ACTIVATION::SIGMOID;
-	ConnectedLayer* cLayer = new ConnectedLayer(testInputs, testWeights, testBiases, testNodes, testActivation);
+	ConnectedLayer* cLayer = new ConnectedLayer(testInputs, sets, testWeights, testBiases, testNodes, testActivation);
 	
-	testInputs = { 0.05f, 0.1f };
+	/*testInputs = { 0.0f, 0.0f };
 	testWeights = { 0.4f, 0.45f, 0.5f, 0.55f };
 	testBiases = { 0.6f, 0.6f };
 	testNodes = 2;
 	testActivation = ACTIVATION::SIGMOID;
-	ConnectedLayer* cLayer2 = new ConnectedLayer(testInputs, testWeights, testBiases, testNodes, testActivation);
+	ConnectedLayer* cLayer2 = new ConnectedLayer(testInputs, testWeights, testBiases, testNodes, testActivation);*/
 
 	NeuralNetwork* nn = new NeuralNetwork();
 	nn->AddLayer(cLayer);
-	nn->AddLayer(cLayer2);
+	//nn->AddLayer(cLayer2);
 
 
-	const int iterations = 1000;
+	const int iterations = 10000;
 	std::vector<float> outputs;
 	float cost = 0.0f;
 	std::vector<double> outputCosts;
@@ -70,26 +71,81 @@ int main()
 
 	for (int i = 0; i < iterations; ++i)
 	{
+		cost = 0.0f;
+		testInputs = { 0.0f, 0.0f };
+		expectedOutputs = { 0.0f, 0.0f };
+		nn->SetInputs(testInputs);
 		nn->CalculateOutputs();
 		nn->BackPropagate(expectedOutputs);
-		cost = nn->GetCost();
+		cost += nn->GetCost();
+
+		testInputs = { 0.0f, 1.0f };
+		expectedOutputs = { 1.0f, 0.0f };
+		nn->SetInputs(testInputs);
+		nn->CalculateOutputs();
+		nn->BackPropagate(expectedOutputs);
+		cost += nn->GetCost();
+
+		testInputs = { 1.0f, 0.0f };
+		expectedOutputs = { 1.0f, 0.0f };
+		nn->SetInputs(testInputs);
+		nn->CalculateOutputs();
+		nn->BackPropagate(expectedOutputs);
+		cost += nn->GetCost();
+
+
+		testInputs = { 1.0f, 1.0f };
+		expectedOutputs = { 1.0f, 1.0f };
+		nn->SetInputs(testInputs);
+		nn->CalculateOutputs();
+		nn->BackPropagate(expectedOutputs);
+		cost += nn->GetCost();
+
+		cost /= sets;
 		outputCosts.push_back(cost);
 		outputIterations.push_back(double(i + 1));
 		outputs = nn->GetOutputs();
 
 		std::cout << "Output 0 = " << outputs[0] << "\nOutput 1 = " << outputs[1] << "\nCost = " << cost << "\n\n";
-		outputOutputs.push_back(outputs[0]);
-		outputOutputs2.push_back(outputs[1]);
+		//outputOutputs.push_back(outputs[0]);
+		//outputOutputs2.push_back(outputs[1]);
 	}
 
-	
+	std::vector<float> input = { 0.0f, 0.0f };
+	nn->SetInputs(testInputs);
+	nn->CalculateOutputs();
+	outputs = nn->GetOutputs();
+
+	std::cout << "Output 0 = " << outputs[0] << "\nOutput 1 = " << outputs[1] <<  "\n\n";
+
+	input = { 0.0f, 1.0f };
+	nn->SetInputs(testInputs);
+	nn->CalculateOutputs();
+	outputs = nn->GetOutputs();
+
+	std::cout << "Output 0 = " << outputs[0] << "\nOutput 1 = " << outputs[1] << "\n\n";
+
+	input = { 1.0f, 0.0f };
+	nn->SetInputs(testInputs);
+	nn->CalculateOutputs();
+	outputs = nn->GetOutputs();
+
+	std::cout << "Output 0 = " << outputs[0] << "\nOutput 1 = " << outputs[1] << "\n\n";
+
+	input = { 1.0f, 1.0f };
+	nn->SetInputs(testInputs);
+	nn->CalculateOutputs();
+	outputs = nn->GetOutputs();
+
+	std::cout << "Output 0 = " << outputs[0] << "\nOutput 1 = " << outputs[1] << "\n\n";
+
 	PlotGraph(outputIterations, outputCosts, "OutputCostOverTime.png");
-	PlotGraph(outputIterations, outputOutputs, "OutputOneOverTime.png");
-	PlotGraph(outputIterations, outputOutputs2, "OutputTwoOverTime.png");
+	//PlotGraph(outputIterations, outputOutputs, "OutputOneOverTime.png");
+	//PlotGraph(outputIterations, outputOutputs2, "OutputTwoOverTime.png");
 
 	system("OutputCostOverTime.png");
-	system("OutputOneOverTime.png");
-	system("OutputTwoOverTime.png");
+	//system("OutputOneOverTime.png");
+	//system("OutputTwoOverTime.png");
 
 	return 0;
 }

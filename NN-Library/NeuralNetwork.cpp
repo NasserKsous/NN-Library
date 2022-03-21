@@ -7,6 +7,13 @@
 NeuralNetwork::NeuralNetwork()
 {
 	numberOfLayers = 0;
+	setsOfInputs = 1;
+}
+
+NeuralNetwork::NeuralNetwork(int sets)
+{
+	numberOfLayers = 0;
+	setsOfInputs = sets;
 }
 
 NeuralNetwork::~NeuralNetwork()
@@ -18,6 +25,16 @@ void NeuralNetwork::AddLayer(Layer* layerToAdd)
 {
 	Network.push_back(layerToAdd);
 	numberOfLayers = Network.size();
+
+	int numOfWeights = layerToAdd->weights.size();
+
+	for (int i = 0; i < numOfWeights; ++i)
+		weights.push_back(layerToAdd->weights[i]);
+	
+	int numOfBiases = layerToAdd->biases.size();
+
+	for (int i = 0; i < numOfBiases; ++i)
+		biases.push_back(layerToAdd->biases[i]);
 }
 
 void NeuralNetwork::SetInputs(std::vector<float> inputs)
@@ -44,6 +61,9 @@ void NeuralNetwork::CalculateOutputs()
 void NeuralNetwork::BackPropagate(std::vector<float> expectedOutputs)
 {
 	cost = 0.0f;
+	biasesCosts.clear();
+	weightsCosts.clear();
+
 	int numberOfOutputs = outputs.size();
 	for (int i = 0; i < numberOfOutputs; ++i)
 	{
@@ -51,22 +71,17 @@ void NeuralNetwork::BackPropagate(std::vector<float> expectedOutputs)
 	}
 	cost /= numberOfOutputs;
 
-
 	Network[numberOfLayers - 1]->BackPropagate(expectedOutputs);
 
 	for (int i = numberOfLayers - 2; i >= 0; --i)
 	{
 		Network[i]->BackPropagate(Network[i+1]->GetBiasCosts(), Network[i + 1]->weights);
 	}
-
-
 	
 	for (int i = numberOfLayers - 1; i >= 0; --i)
 	{
 		Network[i]->UpdateWeightsAndBiases();
 	}
-
-
 }
 
 int NeuralNetwork::GetNumberOfLayers()
@@ -87,4 +102,12 @@ std::vector<Layer*> NeuralNetwork::GetNetwork()
 float NeuralNetwork::GetCost()
 {
 	return cost;
+}
+
+void NeuralNetwork::ResetValues()
+{
+	for (int layerIndex = 0; layerIndex < numberOfLayers; ++layerIndex)
+	{
+		Network[layerIndex]->ResetValues();
+	}
 }

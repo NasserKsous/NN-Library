@@ -4,21 +4,33 @@ ConnectedLayer::ConnectedLayer()
 {
 }
 
-ConnectedLayer::ConnectedLayer(std::vector<float> in, std::vector<float> wei, std::vector<float> bi, int no, ACTIVATION act)
+ConnectedLayer::ConnectedLayer(std::vector<float> in, int soi, std::vector<float> wei, std::vector<float> bi, int no, ACTIVATION act)
 {
 	activation = act;
 	inputs = in;
 	biases = bi;
 	weights = wei;
 	nodes = no;
+	setsOfInputs = soi;
 
+	for (int i = 0; i < setsOfInputs * biases.size(); ++i)
+	{
+		biasesCosts.push_back(0.0f);
+	}
+	
+	for (int i = 0; i < setsOfInputs * weights.size(); ++i)
+	{
+		weightsCosts.push_back(0.0f);
+	}
 }
 
 void ConnectedLayer::CalculateOutputs()
 {
 	outputs.clear();
+
 	int numberOfWeights = weights.size();
 	int numOfWeightsPerNode = numberOfWeights / nodes;
+
 	for (int i = 0; i < nodes; ++i)
 	{
 		float tempOutput = 0;
@@ -37,7 +49,6 @@ void ConnectedLayer::BackPropagate(std::vector<float> expectedOutputs)
 {
 	biasesCosts.clear();
 	weightsCosts.clear();
-	
 
 	int numberOfWeights = weights.size();
 	int numOfWeightsPerNode = numberOfWeights / nodes;
@@ -50,7 +61,7 @@ void ConnectedLayer::BackPropagate(std::vector<float> expectedOutputs)
 		float biasCost = temp1 * temp2;
 		biasesCosts.push_back(biasCost);
 
-		//Update Weigths
+		//Update Weights
 		
 		for (int i = 0; i < numOfWeightsPerNode; ++i)
 		{
@@ -66,7 +77,6 @@ void ConnectedLayer::BackPropagate(std::vector<float> previousBiasCosts, std::ve
 {
 	biasesCosts.clear();
 	weightsCosts.clear();
-
 
 	int numberOfWeights = weights.size();
 	int numOfWeightsPerNode = numberOfWeights / nodes;
@@ -105,20 +115,18 @@ void ConnectedLayer::SetInputs(std::vector<float> in)
 void ConnectedLayer::UpdateWeightsAndBiases()
 {
 	float learningRate = 0.5f;
-	int numberOfWeights = weights.size();
-	int numOfWeightsPerNode = numberOfWeights / nodes;
 
-	for (int neuronIndex = 0; neuronIndex < nodes; ++neuronIndex)
+	int numOfWeights = weights.size();
+	int numOfBiases = biases.size();
+
+	for (int weightIndex = 0; weightIndex < numOfWeights; ++weightIndex)
 	{
-		//Update Bias 
-		biases[neuronIndex] -= learningRate * biasesCosts[neuronIndex];
-
-		//Update Weigths
-
-		for (int i = 0; i < numOfWeightsPerNode; ++i)
-		{
-			weights[i + (neuronIndex * numOfWeightsPerNode)] -= learningRate * weightsCosts[i + (neuronIndex * numOfWeightsPerNode)];
-		}
+		weights[weightIndex] -= learningRate * (weightsCosts[weightIndex] / setsOfInputs);
+	}
+	
+	for (int biasIndex = 0; biasIndex < numOfBiases; ++biasIndex)
+	{
+		biases[biasIndex] -= learningRate * (biasesCosts[biasIndex] / setsOfInputs);
 	}
 }
 
