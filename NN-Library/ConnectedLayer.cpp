@@ -47,8 +47,8 @@ void ConnectedLayer::CalculateOutputs()
 
 void ConnectedLayer::BackPropagate(std::vector<float> expectedOutputs)
 {
-	biasesCosts.clear();
-	weightsCosts.clear();
+	/*biasesCosts.clear();
+	weightsCosts.clear();*/
 
 	int numberOfWeights = weights.size();
 	int numOfWeightsPerNode = numberOfWeights / nodes;
@@ -75,8 +75,8 @@ void ConnectedLayer::BackPropagate(std::vector<float> expectedOutputs)
 
 void ConnectedLayer::BackPropagate(std::vector<float> previousBiasCosts, std::vector<float> previousWeights)
 {
-	biasesCosts.clear();
-	weightsCosts.clear();
+	/*biasesCosts.clear();
+	weightsCosts.clear();*/
 
 	int numberOfWeights = weights.size();
 	int numOfWeightsPerNode = numberOfWeights / nodes;
@@ -112,22 +112,29 @@ void ConnectedLayer::SetInputs(std::vector<float> in)
 	inputs = in;
 }
 
-void ConnectedLayer::UpdateWeightsAndBiases()
+void ConnectedLayer::UpdateWeightsAndBiases(std::vector<float> expWeightsCosts, std::vector<float> expBiasesCosts)
 {
 	float learningRate = 0.5f;
 
-	int numOfWeights = weights.size();
-	int numOfBiases = biases.size();
+	int numOfWeights = expWeightsCosts.size();
+	int numOfBiases = expBiasesCosts.size();
 
 	for (int weightIndex = 0; weightIndex < numOfWeights; ++weightIndex)
 	{
-		weights[weightIndex] -= learningRate * (weightsCosts[weightIndex] / setsOfInputs);
+		weights[weightIndex] -= learningRate * (expWeightsCosts[weightIndex] / setsOfInputs);
 	}
 	
 	for (int biasIndex = 0; biasIndex < numOfBiases; ++biasIndex)
 	{
-		biases[biasIndex] -= learningRate * (biasesCosts[biasIndex] / setsOfInputs);
+		biases[biasIndex] -= learningRate * (expBiasesCosts[biasIndex] / setsOfInputs);
 	}
+}
+
+void ConnectedLayer::ResetValues()
+{
+	//outputs.clear();
+	biasesCosts.clear();
+	weightsCosts.clear();
 }
 
 std::vector<float> ConnectedLayer::GetBiasCosts()

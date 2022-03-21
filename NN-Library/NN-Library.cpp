@@ -49,19 +49,19 @@ int main()
 	ACTIVATION testActivation = ACTIVATION::SIGMOID;
 	ConnectedLayer* cLayer = new ConnectedLayer(testInputs, sets, testWeights, testBiases, testNodes, testActivation);
 	
-	/*testInputs = { 0.0f, 0.0f };
+	testInputs = { 0.0f, 0.0f };
 	testWeights = { 0.4f, 0.45f, 0.5f, 0.55f };
 	testBiases = { 0.6f, 0.6f };
 	testNodes = 2;
 	testActivation = ACTIVATION::SIGMOID;
-	ConnectedLayer* cLayer2 = new ConnectedLayer(testInputs, testWeights, testBiases, testNodes, testActivation);*/
+	ConnectedLayer* cLayer2 = new ConnectedLayer(testInputs, sets, testWeights, testBiases, testNodes, testActivation);
 
-	NeuralNetwork* nn = new NeuralNetwork();
+	NeuralNetwork* nn = new NeuralNetwork(sets);
 	nn->AddLayer(cLayer);
 	//nn->AddLayer(cLayer2);
 
 
-	const int iterations = 10000;
+	const int iterations = 100000;
 	std::vector<float> outputs;
 	float cost = 0.0f;
 	std::vector<double> outputCosts;
@@ -72,34 +72,11 @@ int main()
 	for (int i = 0; i < iterations; ++i)
 	{
 		cost = 0.0f;
-		testInputs = { 0.0f, 0.0f };
-		expectedOutputs = { 0.0f, 0.0f };
-		nn->SetInputs(testInputs);
-		nn->CalculateOutputs();
-		nn->BackPropagate(expectedOutputs);
-		cost += nn->GetCost();
 
-		testInputs = { 0.0f, 1.0f };
-		expectedOutputs = { 1.0f, 0.0f };
-		nn->SetInputs(testInputs);
-		nn->CalculateOutputs();
-		nn->BackPropagate(expectedOutputs);
-		cost += nn->GetCost();
-
-		testInputs = { 1.0f, 0.0f };
-		expectedOutputs = { 1.0f, 0.0f };
-		nn->SetInputs(testInputs);
-		nn->CalculateOutputs();
-		nn->BackPropagate(expectedOutputs);
-		cost += nn->GetCost();
-
-
-		testInputs = { 1.0f, 1.0f };
-		expectedOutputs = { 1.0f, 1.0f };
-		nn->SetInputs(testInputs);
-		nn->CalculateOutputs();
-		nn->BackPropagate(expectedOutputs);
-		cost += nn->GetCost();
+		testInputs = { 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f };
+		expectedOutputs = { 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f };
+		nn->TrainNetwork(testInputs, expectedOutputs);
+		cost = nn->GetCost();
 
 		cost /= sets;
 		outputCosts.push_back(cost);
@@ -112,30 +89,29 @@ int main()
 	}
 
 	std::vector<float> input = { 0.0f, 0.0f };
-	nn->SetInputs(testInputs);
-	nn->CalculateOutputs();
-	outputs = nn->GetOutputs();
+	nn->SetInputs(input);
+	outputs = nn->CalculateOutputs();
 
 	std::cout << "Output 0 = " << outputs[0] << "\nOutput 1 = " << outputs[1] <<  "\n\n";
 
 	input = { 0.0f, 1.0f };
-	nn->SetInputs(testInputs);
+	nn->SetInputs(input);
 	nn->CalculateOutputs();
-	outputs = nn->GetOutputs();
+	outputs = nn->CalculateOutputs();
 
 	std::cout << "Output 0 = " << outputs[0] << "\nOutput 1 = " << outputs[1] << "\n\n";
 
 	input = { 1.0f, 0.0f };
-	nn->SetInputs(testInputs);
+	nn->SetInputs(input);
 	nn->CalculateOutputs();
-	outputs = nn->GetOutputs();
+	outputs = nn->CalculateOutputs();
 
 	std::cout << "Output 0 = " << outputs[0] << "\nOutput 1 = " << outputs[1] << "\n\n";
 
 	input = { 1.0f, 1.0f };
-	nn->SetInputs(testInputs);
+	nn->SetInputs(input);
 	nn->CalculateOutputs();
-	outputs = nn->GetOutputs();
+	outputs = nn->CalculateOutputs();
 
 	std::cout << "Output 0 = " << outputs[0] << "\nOutput 1 = " << outputs[1] << "\n\n";
 
