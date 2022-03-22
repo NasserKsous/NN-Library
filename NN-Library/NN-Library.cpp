@@ -2,6 +2,7 @@
 //
 
 #include <iostream>
+#include <stdlib.h>
 #include "ActivationFunctions.h"
 #include "ConnectedLayer.h"
 #include "NeuralNetwork.h"
@@ -40,88 +41,86 @@ void PlotGraph(std::vector<double> x, std::vector<double> y, std::string fileNam
 
 int main()
 {
-	std::vector<float> testInputs = { 0.0f, 0.0f };
-	std::vector<float> testWeights = { 0.2f, 0.8f, 0.6f, 0.4f };
-	std::vector<float> testBiases = { 0.5f, 0.1f };
-	std::vector<float> expectedOutputs = { 0.0f, 0.0f };
+	std::vector<float> testInputs = { 0.0f };
+	std::vector<float> testWeights = { 0.2f, 0.8f };
+	std::vector<float> testBiases = { 0.5f, 0.6f };
+	std::vector<float> expectedOutputs = { 0.0f };
 	int testNodes = 2;
-	int sets = 4;
+	int sets = 5;
 	ACTIVATION testActivation = ACTIVATION::SIGMOID;
 	ConnectedLayer* cLayer = new ConnectedLayer(testInputs, sets, testWeights, testBiases, testNodes, testActivation);
 	
 	testInputs = { 0.0f, 0.0f };
-	testWeights = { 0.4f, 0.45f, 0.5f, 0.55f };
-	testBiases = { 0.6f, 0.6f };
-	testNodes = 2;
+	testWeights = { 0.4f, 0.45f };
+	testBiases = { 0.6f };
+	testNodes = 1;
 	testActivation = ACTIVATION::SIGMOID;
 	ConnectedLayer* cLayer2 = new ConnectedLayer(testInputs, sets, testWeights, testBiases, testNodes, testActivation);
 
 	NeuralNetwork* nn = new NeuralNetwork(sets);
 	nn->AddLayer(cLayer);
-	//nn->AddLayer(cLayer2);
+	nn->AddLayer(cLayer2);
 
 
-	const int iterations = 100000;
+	const int iterations = 500000;
 	std::vector<float> outputs;
 	float cost = 0.0f;
-	std::vector<double> outputCosts;
-	std::vector<double> outputIterations;
-	std::vector<double> outputOutputs;
-	std::vector<double> outputOutputs2;
+	std::vector<double> outputCosts(iterations);
+	std::vector<double> outputIterations(iterations);
 
 	for (int i = 0; i < iterations; ++i)
 	{
 		cost = 0.0f;
 
-		testInputs = { 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f };
-		expectedOutputs = { 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f };
+		testInputs = { 0.0f, 90.0f, 180.0f, 270.0f, 360.0f };
+		expectedOutputs = { 0.0f, 1.0f, 0.0f, -1.0f, 0.0f };
 		nn->TrainNetwork(testInputs, expectedOutputs);
 		cost = nn->GetCost();
 
 		cost /= sets;
-		outputCosts.push_back(cost);
-		outputIterations.push_back(double(i + 1));
+		outputCosts[i] = cost;
+		outputIterations[i] = double(i + 1.0);
 		outputs = nn->GetOutputs();
-
-		std::cout << "Output 0 = " << outputs[0] << "\nOutput 1 = " << outputs[1] << "\nCost = " << cost << "\n\n";
-		//outputOutputs.push_back(outputs[0]);
-		//outputOutputs2.push_back(outputs[1]);
+		std::cout << "\nCost = " << cost << "\n\n";
 	}
 
-	std::vector<float> input = { 0.0f, 0.0f };
+	std::vector<float> input = { 0.0f };
 	nn->SetInputs(input);
 	outputs = nn->CalculateOutputs();
 
-	std::cout << "Output 0 = " << outputs[0] << "\nOutput 1 = " << outputs[1] <<  "\n\n";
+	std::cout << "Output = " << outputs[0] << "\n\n";
 
-	input = { 0.0f, 1.0f };
-	nn->SetInputs(input);
-	nn->CalculateOutputs();
-	outputs = nn->CalculateOutputs();
-
-	std::cout << "Output 0 = " << outputs[0] << "\nOutput 1 = " << outputs[1] << "\n\n";
-
-	input = { 1.0f, 0.0f };
+	input = { 90.0f };
 	nn->SetInputs(input);
 	nn->CalculateOutputs();
 	outputs = nn->CalculateOutputs();
 
-	std::cout << "Output 0 = " << outputs[0] << "\nOutput 1 = " << outputs[1] << "\n\n";
+	std::cout << "Output = " << outputs[0] << "\n\n";
 
-	input = { 1.0f, 1.0f };
+	input = { 180.0f };
 	nn->SetInputs(input);
 	nn->CalculateOutputs();
 	outputs = nn->CalculateOutputs();
 
-	std::cout << "Output 0 = " << outputs[0] << "\nOutput 1 = " << outputs[1] << "\n\n";
+	std::cout << "Output = " << outputs[0] << "\n\n";
+
+	input = { 270.0f };
+	nn->SetInputs(input);
+	nn->CalculateOutputs();
+	outputs = nn->CalculateOutputs();
+
+	std::cout << "Output = " << outputs[0] << "\n\n";
+	
+	input = { 360.0f };
+	nn->SetInputs(input);
+	nn->CalculateOutputs();
+	outputs = nn->CalculateOutputs();
+
+	std::cout << "Output = " << outputs[0] << "\n\n";
 
 	PlotGraph(outputIterations, outputCosts, "OutputCostOverTime.png");
-	//PlotGraph(outputIterations, outputOutputs, "OutputOneOverTime.png");
-	//PlotGraph(outputIterations, outputOutputs2, "OutputTwoOverTime.png");
 
 	system("OutputCostOverTime.png");
-	//system("OutputOneOverTime.png");
-	//system("OutputTwoOverTime.png");
 
 	return 0;
 }

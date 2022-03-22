@@ -76,14 +76,22 @@ void NeuralNetwork::BackPropagate(std::vector<float> expectedOutputs)
 	
 	Network[numberOfLayers - 1]->ResetValues();
 	Network[numberOfLayers - 1]->BackPropagate(expectedOutputs);
-	tempBiasesCost = Network[numberOfLayers - 1]->GetBiasCosts();
-	tempWeightsCost = Network[numberOfLayers - 1]->GetWeightCosts();
 
 	for (int i = numberOfLayers - 2; i >= 0; --i)
 	{
+		Network[i]->ResetValues();
 		Network[i]->BackPropagate(Network[i+1]->GetBiasCosts(), Network[i + 1]->weights);
-		tempBiasesCost.insert(std::end(tempBiasesCost), std::begin(Network[i]->GetBiasCosts()), std::end(Network[i]->GetBiasCosts()));
-		tempWeightsCost.insert(std::end(tempWeightsCost), std::begin(Network[i]->GetWeightCosts()), std::end(Network[i]->GetWeightCosts()));
+	}
+
+	tempBiasesCost = Network[0]->GetBiasCosts();
+	tempWeightsCost = Network[0]->GetWeightCosts();
+
+	for (int i = 1; i < numberOfLayers; ++i)
+	{
+		std::vector<float> temp = Network[i]->GetBiasCosts();
+		std::vector<float> temp2 = Network[i]->GetWeightCosts();
+		tempBiasesCost.insert(std::end(tempBiasesCost), std::begin(temp), std::end(temp));
+		tempWeightsCost.insert(std::end(tempWeightsCost), std::begin(temp2), std::end(temp2));
 	}
 	
 	if (biasesCosts.size() != 0)

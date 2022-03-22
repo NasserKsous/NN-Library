@@ -13,7 +13,7 @@ ConnectedLayer::ConnectedLayer(std::vector<float> in, int soi, std::vector<float
 	nodes = no;
 	setsOfInputs = soi;
 
-	for (int i = 0; i < setsOfInputs * biases.size(); ++i)
+	/*for (int i = 0; i < setsOfInputs * biases.size(); ++i)
 	{
 		biasesCosts.push_back(0.0f);
 	}
@@ -21,7 +21,7 @@ ConnectedLayer::ConnectedLayer(std::vector<float> in, int soi, std::vector<float
 	for (int i = 0; i < setsOfInputs * weights.size(); ++i)
 	{
 		weightsCosts.push_back(0.0f);
-	}
+	}*/
 }
 
 void ConnectedLayer::CalculateOutputs()
