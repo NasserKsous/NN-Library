@@ -6,7 +6,7 @@ class ConnectedLayer : public Layer
 {
 public:
 	ConnectedLayer();
-	ConnectedLayer(std::vector<float> in, int soi, std::vector<float> wei, std::vector<float> bi, int no, ACTIVATION act);
+	ConnectedLayer(std::vector<float> in, std::vector<float> wei, std::vector<float> bi, int no, ACTIVATION act);
 
 	void CalculateOutputs() override;
 	void BackPropagate(std::vector<float> expectedOutputs) override;

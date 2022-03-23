@@ -4,24 +4,13 @@ ConnectedLayer::ConnectedLayer()
 {
 }
 
-ConnectedLayer::ConnectedLayer(std::vector<float> in, int soi, std::vector<float> wei, std::vector<float> bi, int no, ACTIVATION act)
+ConnectedLayer::ConnectedLayer(std::vector<float> in, std::vector<float> wei, std::vector<float> bi, int no, ACTIVATION act)
 {
 	activation = act;
 	inputs = in;
 	biases = bi;
 	weights = wei;
 	nodes = no;
-	setsOfInputs = soi;
-
-	/*for (int i = 0; i < setsOfInputs * biases.size(); ++i)
-	{
-		biasesCosts.push_back(0.0f);
-	}
-	
-	for (int i = 0; i < setsOfInputs * weights.size(); ++i)
-	{
-		weightsCosts.push_back(0.0f);
-	}*/
 }
 
 void ConnectedLayer::CalculateOutputs()
@@ -121,12 +110,12 @@ void ConnectedLayer::UpdateWeightsAndBiases(std::vector<float> expWeightsCosts, 
 
 	for (int weightIndex = 0; weightIndex < numOfWeights; ++weightIndex)
 	{
-		weights[weightIndex] -= learningRate * (expWeightsCosts[weightIndex] / setsOfInputs);
+		weights[weightIndex] -= learningRate * (expWeightsCosts[weightIndex]);
 	}
 	
 	for (int biasIndex = 0; biasIndex < numOfBiases; ++biasIndex)
 	{
-		biases[biasIndex] -= learningRate * (expBiasesCosts[biasIndex] / setsOfInputs);
+		biases[biasIndex] -= learningRate * (expBiasesCosts[biasIndex]);
 	}
 }
 

@@ -39,41 +39,57 @@ void PlotGraph(std::vector<double> x, std::vector<double> y, std::string fileNam
 	}
 }
 
-int main()
+void SineWave()
 {
+	srand(time(NULL));
+
 	std::vector<float> testInputs = { 0.0f };
-	std::vector<float> testWeights = { 0.2f, 0.8f };
-	std::vector<float> testBiases = { 0.5f, 0.6f };
-	std::vector<float> expectedOutputs = { 0.0f };
-	int testNodes = 2;
-	int sets = 5;
+	std::vector<float> testWeights = { 0.2f, 0.8f, 0.4f, 0.6f, 0.5f, 0.2f, 0.8f, 0.4f, 0.6f, 0.5f, 0.2f, 0.8f, 0.4f, 0.6f, 0.5f, 0.2f, 0.8f, 0.4f, 0.6f, 0.5f };
+	std::vector<float> testBiases = { 0.5f, 0.6f, 1.0f, 5.0f, 4.0f, -2.0f, -4.0f, -3.0f, -2.6f, 3.3f, 0.5f, 0.6f, 1.0f, 5.0f, 4.0f, -2.0f, -4.0f, -3.0f, -2.6f, 3.3f };
+	int testNodes = 20;
 	ACTIVATION testActivation = ACTIVATION::SIGMOID;
-	ConnectedLayer* cLayer = new ConnectedLayer(testInputs, sets, testWeights, testBiases, testNodes, testActivation);
-	
-	testInputs = { 0.0f, 0.0f };
-	testWeights = { 0.4f, 0.45f };
+	ConnectedLayer* cLayer = new ConnectedLayer(testInputs, testWeights, testBiases, testNodes, testActivation);
+
+	testInputs = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
+	testWeights.clear();
+	for (int i = 0; i < 200; ++i)
+	{
+		int randomInt = (rand() % 200) - 100;
+		float tempWeight = (float)randomInt / 100.0f;
+		testWeights.push_back(tempWeight);
+	}
+	testBiases = { 0.5f, 0.6f, 1.0f, 5.0f, 4.0f, -2.0f, -4.0f, -3.0f, -2.6f, 3.3f };
+	testNodes = 10;
+	testActivation = ACTIVATION::SIGMOID;
+	ConnectedLayer* cLayer2 = new ConnectedLayer(testInputs, testWeights, testBiases, testNodes, testActivation);
+
+	testInputs = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
+	testWeights = { 0.4f, 0.45f, 0.2f, 0.54f, 0.32f, 0.67f, -0.2f, -0.6f, -0.4f, 0.4f };
 	testBiases = { 0.6f };
 	testNodes = 1;
 	testActivation = ACTIVATION::SIGMOID;
-	ConnectedLayer* cLayer2 = new ConnectedLayer(testInputs, sets, testWeights, testBiases, testNodes, testActivation);
+	ConnectedLayer* cLayer3 = new ConnectedLayer(testInputs, testWeights, testBiases, testNodes, testActivation);
 
+	int sets = 9;
 	NeuralNetwork* nn = new NeuralNetwork(sets);
 	nn->AddLayer(cLayer);
 	nn->AddLayer(cLayer2);
+	nn->AddLayer(cLayer3);
 
-
-	const int iterations = 500000;
+	const int iterations = 10000;
 	std::vector<float> outputs;
 	float cost = 0.0f;
 	std::vector<double> outputCosts(iterations);
 	std::vector<double> outputIterations(iterations);
 
+	std::vector<float> expectedOutputs;
+
 	for (int i = 0; i < iterations; ++i)
 	{
 		cost = 0.0f;
 
-		testInputs = { 0.0f, 90.0f, 180.0f, 270.0f, 360.0f };
-		expectedOutputs = { 0.0f, 1.0f, 0.0f, -1.0f, 0.0f };
+		testInputs = { 0.0f, 45.0f, 90.0f, 135.0f, 180.0f, 225.0f, 270.0f, 315.0f, 360.0f};
+		expectedOutputs = { 0.0f, 0.7071f, 1.0f, 0.7071f, 0.0f, -0.7071f, -1.0f, -0.7071f, 0.0f };
 		nn->TrainNetwork(testInputs, expectedOutputs);
 		cost = nn->GetCost();
 
@@ -86,24 +102,25 @@ int main()
 
 	std::vector<float> input = { 0.0f };
 	nn->SetInputs(input);
+	nn->CalculateOutputs();
 	outputs = nn->CalculateOutputs();
 
 	std::cout << "Output = " << outputs[0] << "\n\n";
-
+	
 	input = { 90.0f };
 	nn->SetInputs(input);
 	nn->CalculateOutputs();
 	outputs = nn->CalculateOutputs();
 
 	std::cout << "Output = " << outputs[0] << "\n\n";
-
+	
 	input = { 180.0f };
 	nn->SetInputs(input);
 	nn->CalculateOutputs();
 	outputs = nn->CalculateOutputs();
 
 	std::cout << "Output = " << outputs[0] << "\n\n";
-
+	
 	input = { 270.0f };
 	nn->SetInputs(input);
 	nn->CalculateOutputs();
@@ -118,9 +135,94 @@ int main()
 
 	std::cout << "Output = " << outputs[0] << "\n\n";
 
-	PlotGraph(outputIterations, outputCosts, "OutputCostOverTime.png");
+	PlotGraph(outputIterations, outputCosts, "XOR-CostOverTime.png");
 
-	system("OutputCostOverTime.png");
+	system("XOR-CostOverTime.png");
+}
+
+void XOR()
+{
+	std::vector<float> testInputs = { 0.0f, 0.0f };
+	std::vector<float> testWeights = { 0.2f, 0.8f, 0.4f, 0.6f };
+	std::vector<float> testBiases = { 0.5f, 0.6f };
+	int testNodes = 2;
+	ACTIVATION testActivation = ACTIVATION::SIGMOID;
+	ConnectedLayer* cLayer = new ConnectedLayer(testInputs, testWeights, testBiases, testNodes, testActivation);
+
+	testInputs = { 0.0f, 0.0f };
+	testWeights = { 0.4f, 0.45f };
+	testBiases = { 0.6f };
+	testNodes = 1;
+	testActivation = ACTIVATION::SIGMOID;
+	ConnectedLayer* cLayer2 = new ConnectedLayer(testInputs, testWeights, testBiases, testNodes, testActivation);
+
+	int sets = 4;
+	NeuralNetwork* nn = new NeuralNetwork(sets);
+	nn->AddLayer(cLayer);
+	nn->AddLayer(cLayer2);
+
+
+	const int iterations = 10000;
+	std::vector<float> outputs;
+	float cost = 0.0f;
+	std::vector<double> outputCosts(iterations);
+	std::vector<double> outputIterations(iterations);
+
+	std::vector<float> expectedOutputs;
+
+	for (int i = 0; i < iterations; ++i)
+	{
+		cost = 0.0f;
+
+		testInputs = { 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f };
+		expectedOutputs = { 0.0f, 1.0f, 1.0f, 0.0f };
+		nn->TrainNetwork(testInputs, expectedOutputs);
+		cost = nn->GetCost();
+
+		cost /= sets;
+		outputCosts[i] = cost;
+		outputIterations[i] = double(i + 1.0);
+		outputs = nn->GetOutputs();
+		std::cout << "\nCost = " << cost << "\n\n";
+	}
+
+	std::vector<float> input = { 0.0f, 0.0f };
+	nn->SetInputs(input);
+	outputs = nn->CalculateOutputs();
+
+	std::cout << "Output = " << outputs[0] << "\n\n";
+
+	input = { 0.0f, 1.0f };
+	nn->SetInputs(input);
+	nn->CalculateOutputs();
+	outputs = nn->CalculateOutputs();
+
+	std::cout << "Output = " << outputs[0] << "\n\n";
+
+	input = { 1.0f, 0.0f };
+	nn->SetInputs(input);
+	nn->CalculateOutputs();
+	outputs = nn->CalculateOutputs();
+
+	std::cout << "Output = " << outputs[0] << "\n\n";
+
+	input = { 1.0f, 1.0f };
+	nn->SetInputs(input);
+	nn->CalculateOutputs();
+	outputs = nn->CalculateOutputs();
+
+	std::cout << "Output = " << outputs[0] << "\n\n";
+
+	PlotGraph(outputIterations, outputCosts, "XOR-CostOverTime.png");
+
+	system("XOR-CostOverTime.png");
+}
+
+int main()
+{
+	//XOR();
+
+	SineWave();
 
 	return 0;
 }
