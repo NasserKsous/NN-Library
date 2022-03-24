@@ -48,7 +48,7 @@ void SineWave()
 	std::vector<float> testInputs = { 0.0f };
 	std::vector<float> testWeights;
 	testWeights.clear();
-	for (int i = 0; i < 128; ++i)
+	for (int i = 0; i < 32; ++i)
 	{
 		int randomInt = (rand() % 200) - 100;
 		float tempWeight = (float)randomInt / 100.0f;
@@ -56,32 +56,38 @@ void SineWave()
 	}
 	std::vector<float> testBiases = { 0.5f, 0.6f, 1.0f, 5.0f, 4.0f, -2.0f, -4.0f, -3.0f, -2.6f, 3.3f, 0.5f, 0.6f, 1.0f, 5.0f, 4.0f, -2.0f, -4.0f, -3.0f, -2.6f, 3.3f };
 	testBiases.clear();
-	for (int i = 0; i < 128; ++i)
+	for (int i = 0; i < 32; ++i)
 	{
 		int randomInt = (rand() % 200) - 100;
 		float tempBias = (float)randomInt / 100.0f;
 		testBiases.push_back(tempBias);
 	}
-	int testNodes = 128;
+	int testNodes = 32;
 	ACTIVATION testActivation = ACTIVATION::SIGMOID;
 	ConnectedLayer* cLayer = new ConnectedLayer(testInputs, testWeights, testBiases, testNodes, testActivation);
 
 	/*testInputs = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
 	testWeights.clear();
-	for (int i = 0; i < 200; ++i)
+	for (int i = 0; i < 32*32; ++i)
 	{
 		int randomInt = (rand() % 200) - 100;
 		float tempWeight = (float)randomInt / 100.0f;
 		testWeights.push_back(tempWeight);
 	}
-	testBiases = { 0.5f, 0.6f, 1.0f, 5.0f, 4.0f, -2.0f, -4.0f, -3.0f, -2.6f, 3.3f };
-	testNodes = 10;
+	testBiases.clear();
+	for (int i = 0; i < 32; ++i)
+	{
+		int randomInt = (rand() % 200) - 100;
+		float tempBias = (float)randomInt / 100.0f;
+		testBiases.push_back(tempBias);
+	}
+	testNodes = 32;
 	testActivation = ACTIVATION::SIGMOID;
 	ConnectedLayer* cLayer2 = new ConnectedLayer(testInputs, testWeights, testBiases, testNodes, testActivation);*/
 
 	testInputs = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
 	testWeights.clear();
-	for (int i = 0; i < 128; ++i)
+	for (int i = 0; i < 32; ++i)
 	{
 		int randomInt = (rand() % 200) - 100;
 		float tempWeight = (float)randomInt / 100.0f;
@@ -92,13 +98,13 @@ void SineWave()
 	testActivation = ACTIVATION::SIGMOID;
 	ConnectedLayer* cLayer3 = new ConnectedLayer(testInputs, testWeights, testBiases, testNodes, testActivation);
 
-	int sets = 11;
+	int sets = 90;
 	NeuralNetwork* nn = new NeuralNetwork(sets);
 	nn->AddLayer(cLayer);
 	//nn->AddLayer(cLayer2);
 	nn->AddLayer(cLayer3);
 
-	const int iterations = 10000;
+	const int iterations = 5000;
 	std::vector<float> outputs;
 	float cost = 0.0f;
 	std::vector<double> outputCosts(iterations);
@@ -108,13 +114,18 @@ void SineWave()
 
 	testInputs.clear();
 	expectedOutputs.clear();
+	float tempIter = 90.0f / sets;
+	float tempInput = 0.0f;
 	for (int setIndex = 0; setIndex < sets; ++setIndex)
 	{
-		testInputs.push_back(M_PI * 2 / (setIndex + 1.0f));
+		tempInput += tempIter;
+		testInputs.push_back(tempInput);
+		expectedOutputs.push_back(sinf(tempInput * (M_PI/180.0f)));
+
 	}
 	
-	testInputs = { 0.0f, 45.0f, 90.0f, 135.0f, 180.0f, 217.0f, 225.0f, 270.0f, 279.0f, 315.0f, 360.0f };
-	expectedOutputs = { 0.0f, 0.7071f, 1.0f, 0.7071f, 0.0f, -0.6018f, -0.7071f, -1.0f, -0.9877f, -0.7071f, 0.0f };
+	//testInputs = { 0.0f, 45.0f, 90.0f, 135.0f, 180.0f, 217.0f, 225.0f, 270.0f, 279.0f, 315.0f, 360.0f };
+	//expectedOutputs = { 0.0f, 0.7071f, 1.0f, 0.7071f, 0.0f, -0.6018f, -0.7071f, -1.0f, -0.9877f, -0.7071f, 0.0f };
 
 	for (int i = 0; i < iterations; ++i)
 	{
