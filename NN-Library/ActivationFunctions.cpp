@@ -33,6 +33,10 @@ float ActivationFunction::Activate(float x)
 		}
 		case ACTIVATION::TANH:
 		{
+			if (x < -1.0f)
+				return -1.0f;
+			if (x > 1.0f)
+				return 1.0f;
 			return TanhActivation(x);
 			break;
 		}
