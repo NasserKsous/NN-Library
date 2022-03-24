@@ -11,6 +11,8 @@
 #include "pbPlots.hpp"
 #include "supportLib.hpp"
 
+#include <math.h>
+
 //Reference for plotting graph: https://github.com/InductiveComputerScience/pbPlots/tree/v0.1.9.0/Cpp
 
 void PlotGraph(std::vector<double> x, std::vector<double> y, std::string fileName)
@@ -44,13 +46,27 @@ void SineWave()
 	srand(time(NULL));
 
 	std::vector<float> testInputs = { 0.0f };
-	std::vector<float> testWeights = { 0.2f, 0.8f, 0.4f, 0.6f, 0.5f, 0.2f, 0.8f, 0.4f, 0.6f, 0.5f, 0.2f, 0.8f, 0.4f, 0.6f, 0.5f, 0.2f, 0.8f, 0.4f, 0.6f, 0.5f };
+	std::vector<float> testWeights;
+	testWeights.clear();
+	for (int i = 0; i < 128; ++i)
+	{
+		int randomInt = (rand() % 200) - 100;
+		float tempWeight = (float)randomInt / 100.0f;
+		testWeights.push_back(tempWeight);
+	}
 	std::vector<float> testBiases = { 0.5f, 0.6f, 1.0f, 5.0f, 4.0f, -2.0f, -4.0f, -3.0f, -2.6f, 3.3f, 0.5f, 0.6f, 1.0f, 5.0f, 4.0f, -2.0f, -4.0f, -3.0f, -2.6f, 3.3f };
-	int testNodes = 20;
+	testBiases.clear();
+	for (int i = 0; i < 128; ++i)
+	{
+		int randomInt = (rand() % 200) - 100;
+		float tempBias = (float)randomInt / 100.0f;
+		testBiases.push_back(tempBias);
+	}
+	int testNodes = 128;
 	ACTIVATION testActivation = ACTIVATION::SIGMOID;
 	ConnectedLayer* cLayer = new ConnectedLayer(testInputs, testWeights, testBiases, testNodes, testActivation);
 
-	testInputs = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
+	/*testInputs = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
 	testWeights.clear();
 	for (int i = 0; i < 200; ++i)
 	{
@@ -61,19 +77,25 @@ void SineWave()
 	testBiases = { 0.5f, 0.6f, 1.0f, 5.0f, 4.0f, -2.0f, -4.0f, -3.0f, -2.6f, 3.3f };
 	testNodes = 10;
 	testActivation = ACTIVATION::SIGMOID;
-	ConnectedLayer* cLayer2 = new ConnectedLayer(testInputs, testWeights, testBiases, testNodes, testActivation);
+	ConnectedLayer* cLayer2 = new ConnectedLayer(testInputs, testWeights, testBiases, testNodes, testActivation);*/
 
 	testInputs = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
-	testWeights = { 0.4f, 0.45f, 0.2f, 0.54f, 0.32f, 0.67f, -0.2f, -0.6f, -0.4f, 0.4f };
+	testWeights.clear();
+	for (int i = 0; i < 128; ++i)
+	{
+		int randomInt = (rand() % 200) - 100;
+		float tempWeight = (float)randomInt / 100.0f;
+		testWeights.push_back(tempWeight);
+	}
 	testBiases = { 0.6f };
 	testNodes = 1;
 	testActivation = ACTIVATION::SIGMOID;
 	ConnectedLayer* cLayer3 = new ConnectedLayer(testInputs, testWeights, testBiases, testNodes, testActivation);
 
-	int sets = 9;
+	int sets = 11;
 	NeuralNetwork* nn = new NeuralNetwork(sets);
 	nn->AddLayer(cLayer);
-	nn->AddLayer(cLayer2);
+	//nn->AddLayer(cLayer2);
 	nn->AddLayer(cLayer3);
 
 	const int iterations = 10000;
@@ -84,12 +106,20 @@ void SineWave()
 
 	std::vector<float> expectedOutputs;
 
+	testInputs.clear();
+	expectedOutputs.clear();
+	for (int setIndex = 0; setIndex < sets; ++setIndex)
+	{
+		testInputs.push_back(M_PI * 2 / (setIndex + 1.0f));
+	}
+	
+	testInputs = { 0.0f, 45.0f, 90.0f, 135.0f, 180.0f, 217.0f, 225.0f, 270.0f, 279.0f, 315.0f, 360.0f };
+	expectedOutputs = { 0.0f, 0.7071f, 1.0f, 0.7071f, 0.0f, -0.6018f, -0.7071f, -1.0f, -0.9877f, -0.7071f, 0.0f };
+
 	for (int i = 0; i < iterations; ++i)
 	{
 		cost = 0.0f;
 
-		testInputs = { 0.0f, 45.0f, 90.0f, 135.0f, 180.0f, 225.0f, 270.0f, 315.0f, 360.0f};
-		expectedOutputs = { 0.0f, 0.7071f, 1.0f, 0.7071f, 0.0f, -0.7071f, -1.0f, -0.7071f, 0.0f };
 		nn->TrainNetwork(testInputs, expectedOutputs);
 		cost = nn->GetCost();
 
