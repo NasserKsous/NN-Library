@@ -60,16 +60,6 @@ std::vector<float> NeuralNetwork::CalculateOutputs()
 
 void NeuralNetwork::BackPropagate(std::vector<float> expectedOutputs)
 {
-	/*cost = 0.0f;
-
-	int numberOfOutputs = outputs.size();
-	for (int i = 0; i < numberOfOutputs; ++i)
-	{
-		cost += (expectedOutputs[i] - outputs[i]) * (expectedOutputs[i] - outputs[i]);
-	}
-	cost /= numberOfOutputs;
-
-	*/
 
 	std::vector<float> tempBiasesCost;
 	std::vector<float> tempWeightsCost;
