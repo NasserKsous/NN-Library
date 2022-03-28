@@ -249,7 +249,7 @@ namespace NeuralNetworkLibrary
 		nn->TrainNetwork(testInputs, expectedOutputs);
 		float cost = nn->GetCost();
 
-		float testCost = 0.323642763f;
+		float testCost = 0.323642768f;
 
 		EXPECT_FLOAT_EQ(testCost, cost);
 	}
