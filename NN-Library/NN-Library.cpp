@@ -64,7 +64,7 @@ void SineWave()
 		testBiases.push_back(tempBias);
 	}
 	int testNodes = 10;
-	ACTIVATION testActivation = ACTIVATION::RELU;
+	ACTIVATION testActivation = ACTIVATION::SIGMOID;
 	ConnectedLayer* cLayer = new ConnectedLayer(testInputs, testWeights, testBiases, testNodes, testActivation);
 
 	testInputs = { 0.0f };
@@ -84,9 +84,29 @@ void SineWave()
 		testBiases.push_back(tempBias);
 	}
 	testNodes = 25;
-	testActivation = ACTIVATION::RELU;
+	testActivation = ACTIVATION::SIGMOID;
 	ConnectedLayer* cLayer2 = new ConnectedLayer(testInputs, testWeights, testBiases, testNodes, testActivation);
 
+	testInputs = { 0.0f };
+	testWeights.clear();
+	for (int i = 0; i < 25 * testNodes; ++i)
+	{
+		float upper = 1.0f / sqrtf(testNodes);
+		float lower = 0.0f;
+		int randomInt = (rand() % 1000);
+		float tempWeight = (lower + randomInt * (upper - lower)) / 1000.0f;
+		testWeights.push_back(tempWeight);
+	}
+	testBiases.clear();
+	for (int i = 0; i < 25; ++i)
+	{
+		float tempBias = 0.01f;
+		testBiases.push_back(tempBias);
+	}
+	testNodes = 25;
+	testActivation = ACTIVATION::SIGMOID;
+	ConnectedLayer* cLayer3 = new ConnectedLayer(testInputs, testWeights, testBiases, testNodes, testActivation);
+	
 	testInputs = { 0.0f };
 	testWeights.clear();
 	for (int i = 0; i < testNodes; ++i)
@@ -100,13 +120,14 @@ void SineWave()
 	testBiases = { 0.01f };
 	testNodes = 1;
 	testActivation = ACTIVATION::TANH;
-	ConnectedLayer* cLayer3 = new ConnectedLayer(testInputs, testWeights, testBiases, testNodes, testActivation);
+	ConnectedLayer* cLayer4 = new ConnectedLayer(testInputs, testWeights, testBiases, testNodes, testActivation);
 
 	int sets = 400;
 	NeuralNetwork* nn = new NeuralNetwork(sets);
 	nn->AddLayer(cLayer);
 	nn->AddLayer(cLayer2);
 	nn->AddLayer(cLayer3);
+	nn->AddLayer(cLayer4);
 
 	const int iterations = 1000;
 	std::vector<float> outputs;
@@ -127,9 +148,6 @@ void SineWave()
 		expectedOutputs.push_back(sinf(tempInput * (M_PI/180.0f)));
 
 	}
-	
-	//testInputs = { 0.0f, 45.0f, 90.0f, 135.0f, 180.0f, 217.0f, 225.0f, 270.0f, 279.0f, 315.0f, 360.0f };
-	//expectedOutputs = { 0.0f, 0.7071f, 1.0f, 0.7071f, 0.0f, -0.6018f, -0.7071f, -1.0f, -0.9877f, -0.7071f, 0.0f };
 
 	for (int i = 0; i < iterations; ++i)
 	{
@@ -138,7 +156,6 @@ void SineWave()
 		nn->TrainNetwork(testInputs, expectedOutputs);
 		cost = nn->GetCost();
 
-		cost /= sets;
 		outputCosts[i] = cost;
 		outputIterations[i] = double(i + 1.0);
 		outputs = nn->GetOutputs();
@@ -210,7 +227,6 @@ void XOR()
 		nn->TrainNetwork(testInputs, expectedOutputs);
 		cost = nn->GetCost();
 
-		cost /= sets;
 		outputCosts[i] = cost;
 		outputIterations[i] = double(i + 1.0);
 		outputs = nn->GetOutputs();
