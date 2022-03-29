@@ -6,6 +6,8 @@
 #include "../NN-Library/NeuralNetwork.h"
 #include "../NN-Library/NeuralNetwork.cpp"
 
+//Incase of intellisense issues: https://docs.microsoft.com/en-us/visualstudio/test/how-to-use-google-test-for-cpp?view=vs-2019
+
 namespace NeuralNetworkLibrary
 {
 	class ActivationsTests : public ::testing::Test
@@ -56,12 +58,6 @@ namespace NeuralNetworkLibrary
 		EXPECT_EQ(-0.15f, LeakyReLUActivation(input1));
 		EXPECT_EQ(0.0f, LeakyReLUActivation(input2));
 		EXPECT_EQ(1.5f, LeakyReLUActivation(input3));
-	}
-
-	TEST_F(ActivationsTests, ParametricReLUActivation) {
-		EXPECT_EQ(-0.015f, ParametricReLUActivation(input1, 0.01f));
-		EXPECT_EQ(0.0f, ParametricReLUActivation(input2, 0.01f));
-		EXPECT_EQ(1.5f, ParametricReLUActivation(input3, 0.01f));
 	}
 
 	class ConnectedLayerTest : public ::testing::Test

@@ -38,8 +38,10 @@ void ConnectedLayer::CalculateOutputs()
 		nodeOutput += biases[nodeIndex];
 
 		// Calculate the final output after passing it in the activation function.
-		ActivationFunction activeFunc(activation);
-		nodeOutput = activeFunc.Activate(nodeOutput);
+		/*ActivationFunction activeFunc(activation);
+		nodeOutput = activeFunc.Activate(nodeOutput);*/
+
+		nodeOutput = Activate(nodeOutput, activation);
 
 		// Place this node output the list of outputs for the layer.
 		outputs.push_back(nodeOutput);
@@ -149,9 +151,4 @@ std::vector<float> ConnectedLayer::GetBiasCosts()
 std::vector<float> ConnectedLayer::GetWeightCosts()
 {
 	return weightsCosts;
-}
-
-float ConnectedLayer::Activate(float input)
-{
-	return 0.0f;
 }

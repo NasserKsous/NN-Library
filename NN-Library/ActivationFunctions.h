@@ -11,15 +11,17 @@ static inline float ReLUActivation(float x) { return (x >= 0) ? x : 0.0f; }
 static inline float LeakyReLUActivation(float x) { return (x >= 0) ? x : 0.1f*x; }
 static inline float ParametricReLUActivation(float x, float alpha) { return (x >= 0) ? x : alpha * x; }
 
-class ActivationFunction
-{
-public:
-	ActivationFunction(ACTIVATION type);
-	ActivationFunction(ACTIVATION type, float a);
+float Activate(float x, ACTIVATION type);
 
-	float Activate(float x);
-
-private:
-	ACTIVATION activationType;
-	float alpha;
-};
+//class ActivationFunction
+//{
+//public:
+//	ActivationFunction(ACTIVATION type);
+//	ActivationFunction(ACTIVATION type, float a);
+//
+//	float Activate(float x, ACTIVATION type);
+//
+//private:
+//	ACTIVATION activationType;
+//	float alpha;
+//};

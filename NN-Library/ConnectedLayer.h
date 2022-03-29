@@ -37,9 +37,6 @@ public:
 
 private:
 
-	/* Calls the activate function for the layer. */
-	float Activate(float input);
-
 	std::vector<float> weightsCosts;
 	std::vector<float> biasesCosts;
 };
