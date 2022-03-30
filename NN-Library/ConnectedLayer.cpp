@@ -38,9 +38,6 @@ void ConnectedLayer::CalculateOutputs()
 		nodeOutput += biases[nodeIndex];
 
 		// Calculate the final output after passing it in the activation function.
-		/*ActivationFunction activeFunc(activation);
-		nodeOutput = activeFunc.Activate(nodeOutput);*/
-
 		nodeOutput = Activate(nodeOutput, activation);
 
 		// Place this node output the list of outputs for the layer.
