@@ -141,6 +141,7 @@
   <ItemGroup>
     <ClCompile Include="ActivationFunctions.cpp" />
     <ClCompile Include="ConnectedLayer.cpp" />
+    <ClCompile Include="ConvolutionalLayer.cpp" />
     <ClCompile Include="NeuralNetwork.cpp" />
     <ClCompile Include="NN-Library.cpp" />
     <ClCompile Include="pbPlots.cpp" />
@@ -150,6 +151,7 @@
     <ClInclude Include="ActivationFunctions.h" />
     <ClInclude Include="ConnectedLayer.h" />
     <ClInclude Include="Constants.h" />
+    <ClInclude Include="ConvolutionalLayer.h" />
     <ClInclude Include="NeuralNetwork.h" />
     <ClInclude Include="pbPlots.hpp" />
     <ClInclude Include="supportLib.hpp" />

@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include "ActivationFunctions.h"
 #include "ConnectedLayer.h"
+#include "ConvolutionalLayer.h"
 #include "NeuralNetwork.h"
 #include "Constants.h"
 
@@ -269,18 +270,17 @@ int main()
 {
 	//XOR();
 
-	SineWave();
+	//SineWave();
 
+	std::vector<float> input = { 0.0f, 1.0f, 2.0f, 3.0f, 
+								 4.0f, 5.0f, 6.0f, 7.0f, 
+								 8.0f, 9.0f, 10.0f, 11.0f, 
+								 12.0f, 13.0f, 14.0f, 15.0f };
+	std::vector<float> weight = { 0.0f, 1.0f, 0.0f, 
+								  0.0f, 1.0f, 0.0f, 
+								  0.0f, 1.0f, 0.0f };
+
+	ConvolutionalLayer* convLayer = new ConvolutionalLayer(4, 4, input, 3, 3, weight, 0, 0, 1, 1);
+	convLayer->CalculateOutputs();
 	return 0;
 }
-
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
-
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
