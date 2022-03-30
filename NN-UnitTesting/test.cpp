@@ -5,7 +5,8 @@
 #include "../NN-Library/ConnectedLayer.cpp"
 #include "../NN-Library/NeuralNetwork.h"
 #include "../NN-Library/NeuralNetwork.cpp"
-
+#include "../NN-Library/ConvolutionalLayer.h"
+#include "../NN-Library/ConvolutionalLayer.cpp"
 //Incase of intellisense issues: https://docs.microsoft.com/en-us/visualstudio/test/how-to-use-google-test-for-cpp?view=vs-2019
 
 namespace NeuralNetworkLibrary
@@ -129,6 +130,95 @@ namespace NeuralNetworkLibrary
 		EXPECT_FLOAT_EQ(testOutputs[2], layerOutputs[2]);
 	}
 
+	class ConvolutionalLayerTest : public ::testing::Test
+	{
+	protected:
+		std::vector<float> testInputs = { 0.0f, 1.0f, 2.0f, 3.0f, 4.0f,
+										  5.0f, 6.0f, 7.0f, 8.0f, 9.0f,
+										  10.0f, 11.0f, 12.0f, 13.0f, 14.0f,
+										  15.0f, 16.0f, 17.0f, 18.0f, 19.0f,
+										  20.0f, 21.0f, 22.0f, 23.0f, 24.0f };
+
+
+		std::vector<float> testWeights = { 0.0f, 1.0f, 0.0f,
+									  0.0f, 1.0f, 0.0f,
+									  0.0f, 1.0f, 0.0f };
+
+		ConvolutionalLayer* convLayer;
+		ACTIVATION testActivation = ACTIVATION::LINEAR;
+	};
+
+	TEST_F(ConvolutionalLayerTest, Constructor)
+	{
+		convLayer = new ConvolutionalLayer(5, 5, testInputs, 3, 3, testWeights, 1, 1, false, testActivation);
+		EXPECT_EQ(testInputs, convLayer->inputs);
+		EXPECT_EQ(testWeights, convLayer->weights);
+		EXPECT_EQ(testActivation, convLayer->activation);
+	}
+	
+	TEST_F(ConvolutionalLayerTest, ConstructorAssertions)
+	{
+		ASSERT_DEATH(convLayer = new ConvolutionalLayer(3, 3, testInputs, 3, 3, testWeights, 1, 1, false, testActivation), "Input is not the correct size");
+		ASSERT_DEATH(convLayer = new ConvolutionalLayer(5, 5, testInputs, 5, 5, testWeights, 1, 1, false, testActivation), "Filter is not the correct size");
+	}
+	
+	TEST_F(ConvolutionalLayerTest, SetInputs)
+	{
+		convLayer = new ConvolutionalLayer(5, 5, testInputs, 3, 3, testWeights, 1, 1, false, testActivation);
+		
+		testInputs = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+					   0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+					   0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+					   0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+					   0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
+		convLayer->SetInputs(testInputs);
+		EXPECT_EQ(testInputs, convLayer->inputs);
+
+		convLayer = new ConvolutionalLayer(5, 5, testInputs, 3, 3, testWeights, 1, 1, false, testActivation);
+		testInputs = { 0.0f, 1.0f, 2.0f,
+					   3.0f, 4.0f, 5.0f,
+					   6.0f, 7.0f, 8.0f };
+		ASSERT_DEATH(convLayer->SetInputs(testInputs), "Input is not the correct size");
+	}
+	
+	TEST_F(ConvolutionalLayerTest, CalculateOutputs)
+	{
+		convLayer = new ConvolutionalLayer(5, 5, testInputs, 3, 3, testWeights, 1, 1, false, testActivation);
+		convLayer->CalculateOutputs();
+		std::vector<float> outputs = convLayer->GetOutputs();
+		std::vector<float> expectedOutputs = {18.0f, 21.0f, 24.0f,
+											  33.0f, 36.0f, 39.0f,
+											  48.0f, 51.0f, 54.0f};
+
+		EXPECT_EQ(expectedOutputs, outputs);
+	}
+	
+	TEST_F(ConvolutionalLayerTest, CalculateOutputsWithPadding)
+	{
+		convLayer = new ConvolutionalLayer(5, 5, testInputs, 3, 3, testWeights, 1, 1, true, testActivation);
+		convLayer->CalculateOutputs();
+		std::vector<float> outputs = convLayer->GetOutputs();
+		std::vector<float> expectedOutputs = {5.0f, 7.0f, 9.0f, 11.0f, 13.0f,
+											  15.0f, 18.0f, 21.0f, 24.0f, 27.0f,
+											  30.0f, 33.0f, 36.0f, 39.0f, 42.0f,
+											  45.0f, 48.0f, 51.0f, 54.0f, 57.0f,
+											  35.0f, 37.0f, 39.0f, 41.0f, 43.0f};
+
+		EXPECT_EQ(expectedOutputs, outputs);
+	}
+	
+	TEST_F(ConvolutionalLayerTest, CalculateOutputsWithPaddingAndStrideOf2)
+	{
+		convLayer = new ConvolutionalLayer(5, 5, testInputs, 3, 3, testWeights, 2, 2, true, testActivation);
+		convLayer->CalculateOutputs();
+		std::vector<float> outputs = convLayer->GetOutputs();
+		std::vector<float> expectedOutputs = {5.0f, 9.0f, 13.0f,
+											  30.0f, 36.0f, 42.0f,
+											  35.0f, 39.0f, 43.0f};
+
+		EXPECT_EQ(expectedOutputs, outputs);
+	}
+
 	class NeuralNetworkTest : public ::testing::Test
 	{
 	protected:
@@ -141,11 +231,13 @@ namespace NeuralNetworkLibrary
 		ConnectedLayer* cLayer2 = nullptr;
 		NeuralNetwork* nn = nullptr;
 	};
+
 	TEST_F(NeuralNetworkTest, Constructor)
 	{
 		nn = new NeuralNetwork();
 		EXPECT_EQ(0, nn->GetNumberOfLayers());
 	}
+
 	TEST_F(NeuralNetworkTest, AddLayer)
 	{
 		cLayer = new ConnectedLayer(testInputs, testWeights, testBiases, testNodes, testActivation);
@@ -167,6 +259,7 @@ namespace NeuralNetworkLibrary
 		nn = new NeuralNetwork();
 		ASSERT_DEATH(nn->SetInputs(testInputs), "There are no layers to set inputs for.");
 	}
+
 	TEST_F(NeuralNetworkTest, SetInputs)
 	{
 		cLayer = new ConnectedLayer(testInputs, testWeights, testBiases, testNodes, testActivation);
