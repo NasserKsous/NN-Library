@@ -1,13 +1,15 @@
 #pragma once
 #include "Constants.h"
+#include "ActivationFunctions.h"
 
 class ConvolutionalLayer : public Layer
 {
 public:
-	ConvolutionalLayer(int inHei, int inWid, std::vector<float> in, int filHei, int filWid, std::vector<float> wei, int strHei, int strWid, bool pad);
+	ConvolutionalLayer(int inHei, int inWid, std::vector<float> in, int filHei, int filWid, std::vector<float> wei, int strHei, int strWid, bool pad, ACTIVATION actType);
 
 	void CalculateOutputs() override;
 	void SetInputs(std::vector<float> in);
+	std::vector<float> GetOutputs();
 
 private:
 	int inputHeight;
