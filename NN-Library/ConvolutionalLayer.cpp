@@ -1,6 +1,6 @@
 #include "ConvolutionalLayer.h"
 
-ConvolutionalLayer::ConvolutionalLayer(int inHei, int inWid, std::vector<float> in, int filHei, int filWid, std::vector<float> wei, int padHei, int padWid, int strHei, int strWid)
+ConvolutionalLayer::ConvolutionalLayer(int inHei, int inWid, std::vector<float> in, int filHei, int filWid, std::vector<float> wei, int strHei, int strWid, bool pad)
 {
 	inputHeight = inHei;
 	inputWidth = inWid;
@@ -8,22 +8,45 @@ ConvolutionalLayer::ConvolutionalLayer(int inHei, int inWid, std::vector<float> 
 	filterHeight = filHei;
 	filterWidth = filWid;
 	weights = wei;
-	paddingHeight = padHei;
-	paddingWidth = padWid;
+	hasPadding = pad;
 	strideHeight = strHei;
 	strideWidth = strWid;
 
 	if ((int)in.size() == inHei * inWid)
 	{
 		std::vector<float> inputRow;
+
+		if (hasPadding)
+		{
+			std::vector<float> paddingRow(inputWidth + 2, 0.0f);
+			inputImage.push_back(paddingRow);
+		}
+
 		for (int heightIndex = 0; heightIndex < inputHeight; ++heightIndex)
 		{
+			if (hasPadding)
+			{
+				inputRow.push_back(0.0f);
+			}
+
 			for (int widthIndex = 0; widthIndex < inputWidth; ++widthIndex)
 			{
 				inputRow.push_back(inputs[(heightIndex*inputWidth) + widthIndex]);
 			}
+			if (hasPadding)
+			{
+				inputRow.push_back(0.0f);
+			}
 			inputImage.push_back(inputRow);
 			inputRow.clear();
+		}
+		if (hasPadding)
+		{
+			std::vector<float> paddingRow(inputWidth + 2, 0.0f);
+			inputImage.push_back(paddingRow);
+
+			inputWidth += 2;
+			inputHeight += 2;
 		}
 	}
 
@@ -44,9 +67,11 @@ ConvolutionalLayer::ConvolutionalLayer(int inHei, int inWid, std::vector<float> 
 
 void ConvolutionalLayer::CalculateOutputs()
 {
+	outputImage.clear();
+	outputs.clear();
+
 	int halfFilterHeight = (int)filterHeight / 2;
 	int halfFilterWidth = (int)filterWidth / 2;
-
 	
 	int maxHeight = inputHeight - halfFilterHeight - 1;
 	int maxWight = inputWidth - halfFilterWidth - 1;
@@ -66,6 +91,7 @@ void ConvolutionalLayer::CalculateOutputs()
 					output += filter[heightIndex][widthIndex] * inputImage[centreY + (heightIndex - halfFilterHeight)][centreX + (widthIndex - halfFilterWidth)];
 				}
 			}
+			outputs.push_back(output);
 			outputRow.push_back(output);	
 		}
 		outputImage.push_back(outputRow);
