@@ -13,6 +13,7 @@ ConvolutionalLayer::ConvolutionalLayer(int inHei, int inWid, std::vector<float> 
 	strideHeight = strHei;
 	strideWidth = strWid;
 	activation = actType;
+	layerType = LAYER_TYPE::CONVOLUTIONAL;
 
 	assert((int)in.size() == inputHeight * inputWidth && "Input is not the correct size");
 	assert((int)wei.size() == filHei * filWid && "Filter is not the correct size");

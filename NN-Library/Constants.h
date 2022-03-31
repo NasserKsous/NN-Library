@@ -9,11 +9,15 @@ enum class ACTIVATION
 	SIGMOID,
 	TANH,
 	RELU,
-	LEAKY_RELU,
-	PARAMETRIC_RELU
+	LEAKY_RELU
 };
 
-
+enum class LAYER_TYPE
+{
+	CONNECTED = 0,
+	CONVOLUTIONAL,
+	POOLING
+};
 
 class Layer
 {
@@ -24,6 +28,7 @@ public:
 	std::vector<float> biases;
 	int nodes;
 	ACTIVATION activation;
+	LAYER_TYPE layerType;
 	int setsOfInputs;
 
 	virtual void CalculateOutputs() {};

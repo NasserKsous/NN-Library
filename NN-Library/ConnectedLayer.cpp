@@ -2,6 +2,7 @@
 
 ConnectedLayer::ConnectedLayer()
 {
+	layerType = LAYER_TYPE::CONNECTED;
 }
 
 ConnectedLayer::ConnectedLayer(std::vector<float> in, std::vector<float> wei, std::vector<float> bi, int no, ACTIVATION act)
