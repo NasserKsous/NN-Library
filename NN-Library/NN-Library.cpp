@@ -285,5 +285,14 @@ int main()
 
 	ConvolutionalLayer* convLayer = new ConvolutionalLayer(5, 5, input, 3, 3, weight, 1, 1, true, ACTIVATION::RELU);
 	convLayer->CalculateOutputs();
+	std::vector<float> outputs = convLayer->GetOutputs();
+	for (int heightIndex = 0; heightIndex < 5; ++heightIndex)
+	{
+		for (int widthIndex = 0; widthIndex < 5; ++widthIndex)
+		{
+			std::cout << outputs[heightIndex * 5 + widthIndex] << ", ";
+		}
+		std::cout << "\n";
+	}
 	return 0;
 }
