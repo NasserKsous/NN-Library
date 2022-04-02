@@ -1,10 +1,11 @@
 #include "ConvolutionalLayer.h"
 #include <assert.h>
 
-ConvolutionalLayer::ConvolutionalLayer(int inHei, int inWid, std::vector<float> in, int filHei, int filWid, std::vector<float> wei, int strHei, int strWid, bool pad, ACTIVATION actType)
+ConvolutionalLayer::ConvolutionalLayer(int inHei, int inWid, int noChannels, std::vector<float> in, int filHei, int filWid, std::vector<float> wei, int strHei, int strWid, bool pad, ACTIVATION actType)
 {
 	inputHeight = inHei;
 	inputWidth = inWid;
+	numChannels = noChannels;
 	inputs = in;
 	filterHeight = filHei;
 	filterWidth = filWid;
@@ -18,41 +19,46 @@ ConvolutionalLayer::ConvolutionalLayer(int inHei, int inWid, std::vector<float> 
 	assert((int)in.size() == inputHeight * inputWidth && "Input is not the correct size");
 	assert((int)wei.size() == filHei * filWid && "Filter is not the correct size");
 
+	std::vector<std::vector<float>> inputChannel;
 	std::vector<float> inputRow;
 
-	if (hasPadding)
-	{
-		std::vector<float> paddingRow(inputWidth + 2, 0.0f);
-		inputImage.push_back(paddingRow);
-	}
-
-	for (int heightIndex = 0; heightIndex < inputHeight; ++heightIndex)
+	for (int channelIndex = 0; channelIndex < numChannels; ++channelIndex)
 	{
 		if (hasPadding)
 		{
-			inputRow.push_back(0.0f);
+			std::vector<float> paddingRow(inputWidth + 2, 0.0f);
+			inputChannel.push_back(paddingRow);
 		}
 
-		for (int widthIndex = 0; widthIndex < inputWidth; ++widthIndex)
+		for (int heightIndex = 0; heightIndex < inputHeight; ++heightIndex)
 		{
-			inputRow.push_back(inputs[(heightIndex*inputWidth) + widthIndex]);
+			if (hasPadding)
+			{
+				inputRow.push_back(0.0f);
+			}
+
+			for (int widthIndex = 0; widthIndex < inputWidth; ++widthIndex)
+			{
+				inputRow.push_back(inputs[channelIndex * (inputWidth * inputHeight) + (heightIndex * inputWidth) + widthIndex]);
+			}
+			if (hasPadding)
+			{
+				inputRow.push_back(0.0f);
+			}
+			inputChannel.push_back(inputRow);
+			inputRow.clear();
 		}
 		if (hasPadding)
 		{
-			inputRow.push_back(0.0f);
+			std::vector<float> paddingRow(inputWidth + 2, 0.0f);
+			inputChannel.push_back(paddingRow);
+
+			inputWidth += 2;
+			inputHeight += 2;
 		}
-		inputImage.push_back(inputRow);
-		inputRow.clear();
+		inputImage.push_back(inputChannel);
+		inputChannel.clear();
 	}
-	if (hasPadding)
-	{
-		std::vector<float> paddingRow(inputWidth + 2, 0.0f);
-		inputImage.push_back(paddingRow);
-
-		inputWidth += 2;
-		inputHeight += 2;
-	}
-
 	std::vector<float> filterRow;
 	for (int heightIndex = 0; heightIndex < filterHeight; ++heightIndex)
 	{
@@ -76,27 +82,32 @@ void ConvolutionalLayer::CalculateOutputs()
 	int maxHeight = inputHeight - halfFilterHeight - 1;
 	int maxWight = inputWidth - halfFilterWidth - 1;
 
+	std::vector<std::vector<float>> outputChannel;
 	std::vector<float> outputRow;
-
-	for (int centreY = halfFilterHeight; centreY <= maxHeight; centreY += strideHeight)
+	for (int channelIndex = 0; channelIndex < numChannels; ++channelIndex)
 	{
-		for (int centreX = halfFilterWidth; centreX <= maxWight; centreX += strideWidth)
+		for (int centreY = halfFilterHeight; centreY <= maxHeight; centreY += strideHeight)
 		{
-			float output = 0.0f;
-
-			for (int heightIndex = 0; heightIndex < filterHeight; ++heightIndex)
+			for (int centreX = halfFilterWidth; centreX <= maxWight; centreX += strideWidth)
 			{
-				for (int widthIndex = 0; widthIndex < filterHeight; ++widthIndex)
+				float output = 0.0f;
+
+				for (int heightIndex = 0; heightIndex < filterHeight; ++heightIndex)
 				{
-					output += filter[heightIndex][widthIndex] * inputImage[centreY + (heightIndex - halfFilterHeight)][centreX + (widthIndex - halfFilterWidth)];
+					for (int widthIndex = 0; widthIndex < filterHeight; ++widthIndex)
+					{
+						output += filter[heightIndex][widthIndex] * inputImage[channelIndex][centreY + (heightIndex - halfFilterHeight)][centreX + (widthIndex - halfFilterWidth)];
+					}
 				}
+				output = Activate(output, activation);
+				outputs.push_back(output);
+				outputRow.push_back(output);
 			}
-			output = Activate(output, activation);
-			outputs.push_back(output);
-			outputRow.push_back(output);	
+			outputChannel.push_back(outputRow);
+			outputRow.clear();
 		}
-		outputImage.push_back(outputRow);
-		outputRow.clear();
+		outputImage.push_back(outputChannel);
+		outputChannel.clear();
 	}
 }
 
@@ -106,15 +117,22 @@ void ConvolutionalLayer::SetInputs(std::vector<float> in)
 	
 	inputs = in;
 	inputImage.clear();
+	std::vector<std::vector<float>> inputChannel;
 	std::vector<float> inputRow;
-	for (int heightIndex = 0; heightIndex < inputHeight; ++heightIndex)
+
+	for (int channelIndex = 0; channelIndex < numChannels; ++channelIndex)
 	{
-		for (int widthIndex = 0; widthIndex < inputWidth; ++widthIndex)
+		for (int heightIndex = 0; heightIndex < inputHeight; ++heightIndex)
 		{
-			inputRow.push_back(inputs[(heightIndex * inputWidth) + widthIndex]);
+			for (int widthIndex = 0; widthIndex < inputWidth; ++widthIndex)
+			{
+				inputRow.push_back(inputs[channelIndex * (inputWidth * inputHeight) + (heightIndex * inputWidth) + widthIndex]);
+			}
+			inputChannel.push_back(inputRow);
+			inputRow.clear();
 		}
-		inputImage.push_back(inputRow);
-		inputRow.clear();
+		inputImage.push_back(inputChannel);
+		inputChannel.clear();
 	}
 }
 

@@ -5,7 +5,7 @@
 class ConvolutionalLayer : public Layer
 {
 public:
-	ConvolutionalLayer(int inHei, int inWid, std::vector<float> in, int filHei, int filWid, std::vector<float> wei, int strHei, int strWid, bool pad, ACTIVATION actType);
+	ConvolutionalLayer(int inHei, int inWid, int noChannels, std::vector<float> in, int filHei, int filWid, std::vector<float> wei, int strHei, int strWid, bool pad, ACTIVATION actType);
 
 	void CalculateOutputs() override;
 	void SetInputs(std::vector<float> in);
@@ -14,6 +14,7 @@ public:
 private:
 	int inputHeight;
 	int inputWidth;
+	int numChannels;
 	int filterHeight;
 	int filterWidth;
 	int paddingHeight;
@@ -21,8 +22,8 @@ private:
 	int strideHeight;
 	int strideWidth;
 
-	std::vector<std::vector<float>> inputImage;
-	std::vector<std::vector<float>> outputImage;
+	std::vector<std::vector<std::vector<float>>> inputImage;
+	std::vector<std::vector<std::vector<float>>> outputImage;
 	std::vector<std::vector<float>> filter;
 
 	bool hasPadding = false;

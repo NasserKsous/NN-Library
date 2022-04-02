@@ -283,7 +283,7 @@ int main()
 								  0.0f, 1.0f, 0.0f,
 								  0.0f, 1.0f, 0.0f };
 
-	ConvolutionalLayer* convLayer = new ConvolutionalLayer(5, 5, input, 3, 3, weight, 1, 1, true, ACTIVATION::RELU);
+	ConvolutionalLayer* convLayer = new ConvolutionalLayer(5, 5, 1, input, 3, 3, weight, 1, 1, true, ACTIVATION::RELU);
 	convLayer->CalculateOutputs();
 	std::vector<float> outputs = convLayer->GetOutputs();
 	for (int heightIndex = 0; heightIndex < 5; ++heightIndex)

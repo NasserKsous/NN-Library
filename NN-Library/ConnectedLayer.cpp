@@ -30,9 +30,9 @@ void ConnectedLayer::CalculateOutputs()
 		float nodeOutput = 0;
 
 		// Multiply the inputs with the corresponding weights for the node.
-		for (int j = 0; j < numOfWeightsPerNode; ++j)
+		for (int weightIndex = 0; weightIndex < numOfWeightsPerNode; ++weightIndex)
 		{
-			nodeOutput += inputs[j] * weights[j + (nodeIndex * numOfWeightsPerNode)];
+			nodeOutput += inputs[weightIndex] * weights[weightIndex + (nodeIndex * numOfWeightsPerNode)];
 		}
 
 		// Add the bias for the node.
@@ -64,9 +64,9 @@ void ConnectedLayer::BackPropagate(std::vector<float> expectedOutputs)
 		biasesCosts.push_back(biasCost);
 
 		//Calculate weight costs using bias cost * inputs.
-		for (int i = 0; i < numOfWeightsPerNode; ++i)
+		for (int inputIndex = 0; inputIndex < numOfWeightsPerNode; ++inputIndex)
 		{
-			float weightCost = biasCost * inputs[i];
+			float weightCost = biasCost * inputs[inputIndex];
 			weightsCosts.push_back(weightCost);
 		}
 	}
