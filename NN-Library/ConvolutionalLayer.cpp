@@ -16,8 +16,8 @@ ConvolutionalLayer::ConvolutionalLayer(int inHei, int inWid, int noChannels, std
 	activation = actType;
 	layerType = LAYER_TYPE::CONVOLUTIONAL;
 
-	assert((int)in.size() == inputHeight * inputWidth && "Input is not the correct size");
-	assert((int)wei.size() == filHei * filWid && "Filter is not the correct size");
+	assert((int)in.size() == inputHeight * inputWidth * numChannels && "Input is not the correct size");
+	assert((int)wei.size() == filterHeight * filterWidth * numChannels && "Filter is not the correct size");
 
 	std::vector<std::vector<float>> inputChannel;
 	std::vector<float> inputRow;
@@ -59,15 +59,22 @@ ConvolutionalLayer::ConvolutionalLayer(int inHei, int inWid, int noChannels, std
 		inputImage.push_back(inputChannel);
 		inputChannel.clear();
 	}
+
+	std::vector<std::vector<float>> filterChannel;
 	std::vector<float> filterRow;
-	for (int heightIndex = 0; heightIndex < filterHeight; ++heightIndex)
+	for (int channelIndex = 0; channelIndex < numChannels; ++channelIndex)
 	{
-		for (int widthIndex = 0; widthIndex < filterWidth; ++widthIndex)
+		for (int heightIndex = 0; heightIndex < filterHeight; ++heightIndex)
 		{
-			filterRow.push_back(weights[(heightIndex * filterWidth) + widthIndex]);
+			for (int widthIndex = 0; widthIndex < filterWidth; ++widthIndex)
+			{
+				filterRow.push_back(weights[(heightIndex * filterWidth) + widthIndex]);
+			}
+			filterChannel.push_back(filterRow);
+			filterRow.clear();
 		}
-		filter.push_back(filterRow);
-		filterRow.clear();
+		filter.push_back(filterChannel);
+		filterChannel.clear();
 	}
 }
 
@@ -84,36 +91,37 @@ void ConvolutionalLayer::CalculateOutputs()
 
 	std::vector<std::vector<float>> outputChannel;
 	std::vector<float> outputRow;
-	for (int channelIndex = 0; channelIndex < numChannels; ++channelIndex)
+	
+	for (int centreY = halfFilterHeight; centreY <= maxHeight; centreY += strideHeight)
 	{
-		for (int centreY = halfFilterHeight; centreY <= maxHeight; centreY += strideHeight)
+		for (int centreX = halfFilterWidth; centreX <= maxWight; centreX += strideWidth)
 		{
-			for (int centreX = halfFilterWidth; centreX <= maxWight; centreX += strideWidth)
-			{
-				float output = 0.0f;
+			float output = 0.0f;
 
-				for (int heightIndex = 0; heightIndex < filterHeight; ++heightIndex)
+			for (int heightIndex = 0; heightIndex < filterHeight; ++heightIndex)
+			{
+				for (int widthIndex = 0; widthIndex < filterHeight; ++widthIndex)
 				{
-					for (int widthIndex = 0; widthIndex < filterHeight; ++widthIndex)
+					for (int channelIndex = 0; channelIndex < numChannels; ++channelIndex)
 					{
-						output += filter[heightIndex][widthIndex] * inputImage[channelIndex][centreY + (heightIndex - halfFilterHeight)][centreX + (widthIndex - halfFilterWidth)];
+						output += filter[channelIndex][heightIndex][widthIndex] * inputImage[channelIndex][centreY + (heightIndex - halfFilterHeight)][centreX + (widthIndex - halfFilterWidth)];
 					}
 				}
-				output = Activate(output, activation);
-				outputs.push_back(output);
-				outputRow.push_back(output);
 			}
-			outputChannel.push_back(outputRow);
-			outputRow.clear();
+			output = Activate(output, activation);
+			outputs.push_back(output);
+			outputRow.push_back(output);
 		}
-		outputImage.push_back(outputChannel);
-		outputChannel.clear();
+		outputChannel.push_back(outputRow);
+		outputRow.clear();
 	}
+	outputImage.push_back(outputChannel);
+	outputChannel.clear();
 }
 
 void ConvolutionalLayer::SetInputs(std::vector<float> in)
 {
-	assert((int)in.size() == inputHeight * inputWidth && "Input is not the correct size");
+	assert((int)in.size() == inputHeight * inputWidth * numChannels && "Input is not the correct size");
 	
 	inputs = in;
 	inputImage.clear();

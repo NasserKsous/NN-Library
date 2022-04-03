@@ -155,6 +155,28 @@ namespace NeuralNetworkLibrary
 		EXPECT_EQ(testWeights, convLayer->weights);
 		EXPECT_EQ(testActivation, convLayer->activation);
 	}
+
+	TEST_F(ConvolutionalLayerTest, ConstructorMultipleChannels)
+	{
+		testInputs.clear();
+		for (float valueIndex = 0.0f; valueIndex < 75.0f; ++valueIndex)
+		{
+			testInputs.push_back(valueIndex);
+		}
+		testWeights = { 0.0f, 1.0f, 0.0f,
+						0.0f, 1.0f, 0.0f,
+						0.0f, 1.0f, 0.0f,
+
+						0.0f, 1.0f, 0.0f,
+						0.0f, 1.0f, 0.0f,
+						0.0f, 1.0f, 0.0f,
+
+						0.0f, 1.0f, 0.0f,
+						0.0f, 1.0f, 0.0f,
+						0.0f, 1.0f, 0.0f };
+		convLayer = new ConvolutionalLayer(5, 5, 3, testInputs, 3, 3, testWeights, 1, 1, false, testActivation);
+		EXPECT_EQ(testInputs, convLayer->inputs);
+	}
 	
 	TEST_F(ConvolutionalLayerTest, ConstructorAssertions)
 	{
@@ -179,6 +201,36 @@ namespace NeuralNetworkLibrary
 					   3.0f, 4.0f, 5.0f,
 					   6.0f, 7.0f, 8.0f };
 		ASSERT_DEATH(convLayer->SetInputs(testInputs), "Input is not the correct size");
+	}
+
+	TEST_F(ConvolutionalLayerTest, SetInputsWithMultipleChannels)
+	{
+		testInputs.clear();
+		for (float valueIndex = 0.0f; valueIndex < 75.0f; ++valueIndex)
+		{
+			testInputs.push_back(valueIndex);
+		}
+		testWeights = { 0.0f, 1.0f, 0.0f,
+						0.0f, 1.0f, 0.0f,
+						0.0f, 1.0f, 0.0f,
+
+						0.0f, 1.0f, 0.0f,
+						0.0f, 1.0f, 0.0f,
+						0.0f, 1.0f, 0.0f,
+
+						0.0f, 1.0f, 0.0f,
+						0.0f, 1.0f, 0.0f,
+						0.0f, 1.0f, 0.0f };
+
+		convLayer = new ConvolutionalLayer(5, 5, 3, testInputs, 3, 3, testWeights, 1, 1, false, testActivation);
+
+		testInputs.clear();
+		for (float valueIndex = 0.0f; valueIndex < 75.0f; ++valueIndex)
+		{
+			testInputs.push_back(0.0f);
+		}
+		convLayer->SetInputs(testInputs);
+		EXPECT_EQ(testInputs, convLayer->inputs);
 	}
 	
 	TEST_F(ConvolutionalLayerTest, CalculateOutputs)
@@ -215,6 +267,36 @@ namespace NeuralNetworkLibrary
 		std::vector<float> expectedOutputs = {5.0f, 9.0f, 13.0f,
 											  30.0f, 36.0f, 42.0f,
 											  35.0f, 39.0f, 43.0f};
+
+		EXPECT_EQ(expectedOutputs, outputs);
+	}
+
+	TEST_F(ConvolutionalLayerTest, CalculateOutputsWithMultipleChannels)
+	{
+		testInputs.clear();
+		for (float valueIndex = 0.0f; valueIndex < 75.0f; ++valueIndex)
+		{
+			testInputs.push_back(valueIndex);
+		}
+		testWeights = { 0.0f, 1.0f, 0.0f,
+						0.0f, 1.0f, 0.0f,
+						0.0f, 1.0f, 0.0f,
+
+						0.0f, 1.0f, 0.0f,
+						0.0f, 1.0f, 0.0f,
+						0.0f, 1.0f, 0.0f,
+
+						0.0f, 1.0f, 0.0f,
+						0.0f, 1.0f, 0.0f,
+						0.0f, 1.0f, 0.0f };
+
+
+		convLayer = new ConvolutionalLayer(5, 5, 3, testInputs, 3, 3, testWeights, 1, 1, false, testActivation);
+		convLayer->CalculateOutputs();
+		std::vector<float> outputs = convLayer->GetOutputs();
+		std::vector<float> expectedOutputs = {  279.0f, 288.0f, 297.0f,
+												324.0f, 333.0f, 342.0f,
+												369.0f, 378.0f, 387.0f};
 
 		EXPECT_EQ(expectedOutputs, outputs);
 	}

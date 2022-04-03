@@ -24,7 +24,7 @@ private:
 
 	std::vector<std::vector<std::vector<float>>> inputImage;
 	std::vector<std::vector<std::vector<float>>> outputImage;
-	std::vector<std::vector<float>> filter;
+	std::vector<std::vector<std::vector<float>>> filter;
 
 	bool hasPadding = false;
 };
