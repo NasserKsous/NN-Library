@@ -3,6 +3,8 @@
 
 #include <iostream>
 #include <stdlib.h>
+#include <stdint.h>
+#include <fstream>
 #include <math.h>
 
 #include "ActivationFunctions.h"
@@ -14,7 +16,16 @@
 #include "pbPlots.hpp"
 #include "supportLib.hpp"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
+#include "mnist/mnist_reader_less.hpp"
+
 //Reference for plotting graph: https://github.com/InductiveComputerScience/pbPlots/tree/v0.1.9.0/Cpp
+
+//Reference for MNIST reading: https://github.com/wichtounet/mnist
+
+//Reference for MNIST dataset: http://yann.lecun.com/exdb/mnist/
 
 void PlotGraph(std::vector<double> x, std::vector<double> y, std::string fileName)
 {
@@ -272,6 +283,26 @@ int main()
 
 	//SineWave();
 
+	/*int width, height, bpp;
+
+	float* rgb_image = stbi_loadf("testImage.png", &width, &height, &bpp, 3);*/
+
+	auto dataset = mnist::read_dataset();
+
+	std::cout << "Number of training images = " << dataset.training_images.size() << std::endl;
+	std::cout << "Number of training labels = " << dataset.training_labels.size() << std::endl;
+	std::cout << "Number of test images = " << dataset.test_images.size() << std::endl;
+	std::cout << "Number of test labels = " << dataset.test_labels.size() << std::endl;
+
+	for (int i = 0; i < 28; ++i)
+	{
+		for (int j = 0; j < 28; ++j)
+		{
+			std::cout << (float)dataset.test_images[0][i * 28 + j] << "   ";
+		}
+		std::cout << "\n";
+	}
+
 	std::vector<float> input = { 0.0f, 1.0f, 2.0f, 3.0f, 4.0f, 
 								 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 
 								 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 
@@ -285,7 +316,8 @@ int main()
 
 	std::vector<Filter> filters = { Filter(3, 3, 1, weight) };
 
-	ConvolutionalLayer* convLayer = new ConvolutionalLayer(5, 5, 1, input, filters, 1, 1, true, ACTIVATION::RELU);
+	ConvolutionalLayer* convLayer = new ConvolutionalLayer(5, 5, 1, filters, 1, 1, true, ACTIVATION::RELU);
+	convLayer->SetInputs(input);
 	convLayer->CalculateOutputs();
 	std::vector<float> outputs = convLayer->GetOutputs();
 	for (int heightIndex = 0; heightIndex < 5; ++heightIndex)
