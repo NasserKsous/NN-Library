@@ -7,7 +7,9 @@
 #include "../NN-Library/NeuralNetwork.cpp"
 #include "../NN-Library/ConvolutionalLayer.h"
 #include "../NN-Library/ConvolutionalLayer.cpp"
-//Incase of intellisense issues close and reopen the solution
+#include "../NN-Library/PoolingLayer.h"
+#include "../NN-Library/PoolingLayer.cpp"
+//Incase of intellisense issues open test options then close and reopen the solution
 
 namespace NeuralNetworkLibrary
 {
@@ -138,21 +140,23 @@ namespace NeuralNetworkLibrary
 										  10.0f, 11.0f, 12.0f, 13.0f, 14.0f,
 										  15.0f, 16.0f, 17.0f, 18.0f, 19.0f,
 										  20.0f, 21.0f, 22.0f, 23.0f, 24.0f };
-
-
 		std::vector<float> testWeights = { 0.0f, 1.0f, 0.0f,
 									  0.0f, 1.0f, 0.0f,
 									  0.0f, 1.0f, 0.0f };
 
-		ConvolutionalLayer* convLayer;
+		std::vector<Filter> testFilters = { Filter(3, 3, 1, testWeights) };
+		
+		
+		ConvolutionalLayer* convLayer = nullptr;
 		ACTIVATION testActivation = ACTIVATION::LINEAR;
 	};
 
 	TEST_F(ConvolutionalLayerTest, Constructor)
 	{
-		convLayer = new ConvolutionalLayer(5, 5, 1, testInputs, 3, 3, testWeights, 1, 1, false, testActivation);
+		convLayer = new ConvolutionalLayer(5, 5, 1, testInputs, testFilters, 1, 1, false, testActivation);
+		std::vector<Filter> filters = convLayer->GetFilters();
 		EXPECT_EQ(testInputs, convLayer->inputs);
-		EXPECT_EQ(testWeights, convLayer->weights);
+		EXPECT_EQ(testFilters[0].values, filters[0].values);
 		EXPECT_EQ(testActivation, convLayer->activation);
 	}
 
@@ -174,19 +178,23 @@ namespace NeuralNetworkLibrary
 						0.0f, 1.0f, 0.0f,
 						0.0f, 1.0f, 0.0f,
 						0.0f, 1.0f, 0.0f };
-		convLayer = new ConvolutionalLayer(5, 5, 3, testInputs, 3, 3, testWeights, 1, 1, false, testActivation);
+		testFilters.clear();
+		testFilters.push_back(Filter{ 3, 3, 3, testWeights });
+
+		convLayer = new ConvolutionalLayer(5, 5, 3, testInputs, testFilters, 1, 1, false, testActivation);
 		EXPECT_EQ(testInputs, convLayer->inputs);
 	}
 	
 	TEST_F(ConvolutionalLayerTest, ConstructorAssertions)
 	{
-		ASSERT_DEATH(convLayer = new ConvolutionalLayer(3, 3, 1, testInputs, 3, 3, testWeights, 1, 1, false, testActivation), "Input is not the correct size");
-		ASSERT_DEATH(convLayer = new ConvolutionalLayer(5, 5, 1, testInputs, 5, 5, testWeights, 1, 1, false, testActivation), "Filter is not the correct size");
+		ASSERT_DEATH(convLayer = new ConvolutionalLayer(3, 3, 1, testInputs, testFilters, 1, 1, false, testActivation), "Input is not the correct size");
+		testFilters[0].channels = 3;
+		ASSERT_DEATH(convLayer = new ConvolutionalLayer(5, 5, 1, testInputs, testFilters, 1, 1, false, testActivation), "Filter is not the correct size");
 	}
 	
 	TEST_F(ConvolutionalLayerTest, SetInputs)
 	{
-		convLayer = new ConvolutionalLayer(5, 5, 1, testInputs, 3, 3, testWeights, 1, 1, false, testActivation);
+		convLayer = new ConvolutionalLayer(5, 5, 1, testInputs, testFilters, 1, 1, false, testActivation);
 		
 		testInputs = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
 					   0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
@@ -196,7 +204,7 @@ namespace NeuralNetworkLibrary
 		convLayer->SetInputs(testInputs);
 		EXPECT_EQ(testInputs, convLayer->inputs);
 
-		convLayer = new ConvolutionalLayer(5, 5, 1, testInputs, 3, 3, testWeights, 1, 1, false, testActivation);
+		convLayer = new ConvolutionalLayer(5, 5, 1, testInputs, testFilters, 1, 1, false, testActivation);
 		testInputs = { 0.0f, 1.0f, 2.0f,
 					   3.0f, 4.0f, 5.0f,
 					   6.0f, 7.0f, 8.0f };
@@ -221,8 +229,10 @@ namespace NeuralNetworkLibrary
 						0.0f, 1.0f, 0.0f,
 						0.0f, 1.0f, 0.0f,
 						0.0f, 1.0f, 0.0f };
+		testFilters.clear();
+		testFilters.push_back(Filter{ 3, 3, 3, testWeights });
 
-		convLayer = new ConvolutionalLayer(5, 5, 3, testInputs, 3, 3, testWeights, 1, 1, false, testActivation);
+		convLayer = new ConvolutionalLayer(5, 5, 3, testInputs, testFilters, 1, 1, false, testActivation);
 
 		testInputs.clear();
 		for (float valueIndex = 0.0f; valueIndex < 75.0f; ++valueIndex)
@@ -235,7 +245,7 @@ namespace NeuralNetworkLibrary
 	
 	TEST_F(ConvolutionalLayerTest, CalculateOutputs)
 	{
-		convLayer = new ConvolutionalLayer(5, 5, 1, testInputs, 3, 3, testWeights, 1, 1, false, testActivation);
+		convLayer = new ConvolutionalLayer(5, 5, 1, testInputs, testFilters, 1, 1, false, testActivation);
 		convLayer->CalculateOutputs();
 		std::vector<float> outputs = convLayer->GetOutputs();
 		std::vector<float> expectedOutputs = {18.0f, 21.0f, 24.0f,
@@ -247,7 +257,7 @@ namespace NeuralNetworkLibrary
 	
 	TEST_F(ConvolutionalLayerTest, CalculateOutputsWithPadding)
 	{
-		convLayer = new ConvolutionalLayer(5, 5, 1, testInputs, 3, 3, testWeights, 1, 1, true, testActivation);
+		convLayer = new ConvolutionalLayer(5, 5, 1, testInputs, testFilters, 1, 1, true, testActivation);
 		convLayer->CalculateOutputs();
 		std::vector<float> outputs = convLayer->GetOutputs();
 		std::vector<float> expectedOutputs = {5.0f, 7.0f, 9.0f, 11.0f, 13.0f,
@@ -261,7 +271,7 @@ namespace NeuralNetworkLibrary
 	
 	TEST_F(ConvolutionalLayerTest, CalculateOutputsWithPaddingAndStrideOf2)
 	{
-		convLayer = new ConvolutionalLayer(5, 5, 1, testInputs, 3, 3, testWeights, 2, 2, true, testActivation);
+		convLayer = new ConvolutionalLayer(5, 5, 1, testInputs, testFilters, 2, 2, true, testActivation);
 		convLayer->CalculateOutputs();
 		std::vector<float> outputs = convLayer->GetOutputs();
 		std::vector<float> expectedOutputs = {5.0f, 9.0f, 13.0f,
@@ -289,14 +299,164 @@ namespace NeuralNetworkLibrary
 						0.0f, 1.0f, 0.0f,
 						0.0f, 1.0f, 0.0f,
 						0.0f, 1.0f, 0.0f };
+		testFilters.clear();
+		testFilters.push_back(Filter{ 3, 3, 3, testWeights });
 
-
-		convLayer = new ConvolutionalLayer(5, 5, 3, testInputs, 3, 3, testWeights, 1, 1, false, testActivation);
+		convLayer = new ConvolutionalLayer(5, 5, 3, testInputs, testFilters, 1, 1, false, testActivation);
 		convLayer->CalculateOutputs();
 		std::vector<float> outputs = convLayer->GetOutputs();
 		std::vector<float> expectedOutputs = {  279.0f, 288.0f, 297.0f,
 												324.0f, 333.0f, 342.0f,
 												369.0f, 378.0f, 387.0f};
+
+		EXPECT_EQ(expectedOutputs, outputs);
+	}
+
+	class PoolingLayerTest : public ::testing::Test
+	{
+	protected:
+		std::vector<float> testInputs = { 0.0f, 1.0f, 2.0f, 3.0f, 4.0f,
+										  5.0f, 6.0f, 7.0f, 8.0f, 9.0f,
+										  10.0f, 11.0f, 12.0f, 13.0f, 14.0f,
+										  15.0f, 16.0f, 17.0f, 18.0f, 19.0f,
+										  20.0f, 21.0f, 22.0f, 23.0f, 24.0f };
+
+		PoolingLayer* poolLayer = nullptr;
+	};
+
+	TEST_F(PoolingLayerTest, Constructor)
+	{
+		poolLayer = new PoolingLayer(5, 5, 1, testInputs, 3, 3, 1, 1, true);
+		EXPECT_EQ(testInputs, poolLayer->inputs);
+	}
+
+	TEST_F(PoolingLayerTest, ConstructorMultipleChannels)
+	{
+		testInputs.clear();
+		for (float valueIndex = 0.0f; valueIndex < 75.0f; ++valueIndex)
+		{
+			testInputs.push_back(valueIndex);
+		}
+
+		poolLayer = new PoolingLayer(5, 5, 3, testInputs, 3, 3, 1, 1, true);
+	}
+
+	TEST_F(PoolingLayerTest, ConstructorAssertions)
+	{
+		ASSERT_DEATH(poolLayer = new PoolingLayer(3, 3, 3, testInputs, 3, 3, 1, 1, true), "Input is not the correct size");
+	}
+
+	TEST_F(PoolingLayerTest, SetInputs)
+	{
+		poolLayer = new PoolingLayer(5, 5, 1, testInputs, 3, 3, 1, 1, true);
+
+		testInputs = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+					   0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+					   0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+					   0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+					   0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
+		poolLayer->SetInputs(testInputs);
+		EXPECT_EQ(testInputs, poolLayer->inputs);
+
+		poolLayer = new PoolingLayer(5, 5, 1, testInputs, 3, 3, 1, 1, true);
+		testInputs = { 0.0f, 1.0f, 2.0f,
+					   3.0f, 4.0f, 5.0f,
+					   6.0f, 7.0f, 8.0f };
+		ASSERT_DEATH(poolLayer->SetInputs(testInputs), "Input is not the correct size");
+	}
+
+	TEST_F(PoolingLayerTest, SetInputsWithMultipleChannels)
+	{
+		testInputs.clear();
+		for (float valueIndex = 0.0f; valueIndex < 75.0f; ++valueIndex)
+		{
+			testInputs.push_back(valueIndex);
+		}
+		poolLayer = new PoolingLayer(5, 5, 3, testInputs, 3, 3, 1, 1, true);
+
+		testInputs.clear();
+		for (float valueIndex = 0.0f; valueIndex < 75.0f; ++valueIndex)
+		{
+			testInputs.push_back(0.0f);
+		}
+		poolLayer->SetInputs(testInputs);
+		EXPECT_EQ(testInputs, poolLayer->inputs);
+	}
+
+	TEST_F(PoolingLayerTest, CalculateOutputsMaxPooling)
+	{
+		poolLayer = new PoolingLayer(5, 5, 1, testInputs, 3, 3, 1, 1, true);
+		poolLayer->CalculateOutputs();
+		std::vector<float> outputs = poolLayer->GetOutputs();
+		std::vector<float> expectedOutputs = { 12.0f, 13.0f, 14.0f,
+											  17.0f, 18.0f, 19.0f,
+											  22.0f, 23.0f, 24.0f };
+
+		EXPECT_EQ(expectedOutputs, outputs);
+	}
+	
+	TEST_F(PoolingLayerTest, CalculateOutputsAveragePooling)
+	{
+		poolLayer = new PoolingLayer(5, 5, 1, testInputs, 3, 3, 1, 1, false);
+		poolLayer->CalculateOutputs();
+		std::vector<float> outputs = poolLayer->GetOutputs();
+		std::vector<float> expectedOutputs = { 6.0f, 7.0f, 8.0f,
+											  11.0f, 12.0f, 13.0f,
+											  16.0f, 17.0f, 18.0f };
+
+		EXPECT_EQ(expectedOutputs, outputs);
+	}
+
+	TEST_F(PoolingLayerTest, CalculateOutputsMaxPoolingWithMultipleChannels)
+	{
+		testInputs.clear();
+		for (float valueIndex = 0.0f; valueIndex < 75.0f; ++valueIndex)
+		{
+			testInputs.push_back(valueIndex);
+		}
+
+		poolLayer = new PoolingLayer(5, 5, 3, testInputs, 3, 3, 1, 1, true);
+		poolLayer->CalculateOutputs();
+		std::vector<float> outputs = poolLayer->GetOutputs();
+		std::vector<float> expectedOutputs = {	12.0f, 13.0f, 14.0f,
+												17.0f, 18.0f, 19.0f,
+												22.0f, 23.0f, 24.0f,
+			
+												37.0f, 38.0f, 39.0f,
+												42.0f, 43.0f, 44.0f,
+												47.0f, 48.0f, 49.0f,
+												
+												62.0f, 63.0f, 64.0f,
+												67.0f, 68.0f, 69.0f,
+												72.0f, 73.0f, 74.0f
+											};
+
+		EXPECT_EQ(expectedOutputs, outputs);
+	}
+	
+	TEST_F(PoolingLayerTest, CalculateOutputsAveragePoolingWithMultipleChannels)
+	{
+		testInputs.clear();
+		for (float valueIndex = 0.0f; valueIndex < 75.0f; ++valueIndex)
+		{
+			testInputs.push_back(valueIndex);
+		}
+
+		poolLayer = new PoolingLayer(5, 5, 3, testInputs, 3, 3, 1, 1, false);
+		poolLayer->CalculateOutputs();
+		std::vector<float> outputs = poolLayer->GetOutputs();
+		std::vector<float> expectedOutputs = {	6.0f, 7.0f, 8.0f,
+												11.0f, 12.0f, 13.0f,
+												16.0f, 17.0f, 18.0f,
+			
+												31.0f, 32.0f, 33.0f,
+												36.0f, 37.0f, 38.0f,
+												41.0f, 42.0f, 43.0f,
+												
+												56.0f, 57.0f, 58.0f,
+												61.0f, 62.0f, 63.0f,
+												66.0f, 67.0f, 68.0f
+											};
 
 		EXPECT_EQ(expectedOutputs, outputs);
 	}
