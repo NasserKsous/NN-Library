@@ -1,26 +1,22 @@
 #include "ConvolutionalLayer.h"
 #include <assert.h>
 
-ConvolutionalLayer::ConvolutionalLayer(int inHei, int inWid, int noChannels, std::vector<float> in, std::vector<Filter> wei, int strHei, int strWid, bool pad, ACTIVATION actType)
+ConvolutionalLayer::ConvolutionalLayer(int inHei, int inWid, int noChannels, std::vector<Filter> wei, int strHei, int strWid, bool pad, ACTIVATION actType)
 {
 	inputHeight = inHei;
 	inputWidth = inWid;
 	numChannels = noChannels;
-	inputs = in;
 	numFilters = wei.size();
 	hasPadding = pad;
 	strideHeight = strHei;
 	strideWidth = strWid;
 	activation = actType;
 	layerType = LAYER_TYPE::CONVOLUTIONAL;
-
-	assert((int)in.size() == inputHeight * inputWidth * numChannels && "Input is not the correct size");
 	
-
 	std::vector<std::vector<float>> inputChannel;
 	std::vector<float> inputRow;
 
-	for (int channelIndex = 0; channelIndex < numChannels; ++channelIndex)
+	/*for (int channelIndex = 0; channelIndex < numChannels; ++channelIndex)
 	{
 		if (hasPadding)
 		{
@@ -56,7 +52,7 @@ ConvolutionalLayer::ConvolutionalLayer(int inHei, int inWid, int noChannels, std
 		}
 		inputImage.push_back(inputChannel);
 		inputChannel.clear();
-	}
+	}*/
 	
 	for (Filter weight : wei)
 	{
@@ -120,14 +116,37 @@ void ConvolutionalLayer::SetInputs(std::vector<float> in)
 
 	for (int channelIndex = 0; channelIndex < numChannels; ++channelIndex)
 	{
+		if (hasPadding)
+		{
+			std::vector<float> paddingRow(inputWidth + 2, 0.0f);
+			inputChannel.push_back(paddingRow);
+		}
+
 		for (int heightIndex = 0; heightIndex < inputHeight; ++heightIndex)
 		{
+			if (hasPadding)
+			{
+				inputRow.push_back(0.0f);
+			}
+
 			for (int widthIndex = 0; widthIndex < inputWidth; ++widthIndex)
 			{
 				inputRow.push_back(inputs[channelIndex * (inputWidth * inputHeight) + (heightIndex * inputWidth) + widthIndex]);
 			}
+			if (hasPadding)
+			{
+				inputRow.push_back(0.0f);
+			}
 			inputChannel.push_back(inputRow);
 			inputRow.clear();
+		}
+		if (hasPadding)
+		{
+			std::vector<float> paddingRow(inputWidth + 2, 0.0f);
+			inputChannel.push_back(paddingRow);
+
+			inputWidth += 2;
+			inputHeight += 2;
 		}
 		inputImage.push_back(inputChannel);
 		inputChannel.clear();

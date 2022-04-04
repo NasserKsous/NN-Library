@@ -49,7 +49,7 @@ std::vector<float> NeuralNetwork::CalculateOutputs()
 	for (int i = 0; i < numberOfLayers; ++i)
 	{
 		// Set the inputs of the layer as the outputs of the previous layer.
-		Network[i]->inputs = currentOutputs;
+		Network[i]->SetInputs(currentOutputs);
 		Network[i]->CalculateOutputs();
 		currentOutputs = Network[i]->outputs;
 	}

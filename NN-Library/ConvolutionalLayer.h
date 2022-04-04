@@ -37,10 +37,10 @@ struct Filter
 class ConvolutionalLayer : public Layer
 {
 public:
-	ConvolutionalLayer(int inHei, int inWid, int noChannels, std::vector<float> in, std::vector<Filter> wei, int strHei, int strWid, bool pad, ACTIVATION actType);
+	ConvolutionalLayer(int inHei, int inWid, int noChannels, std::vector<Filter> wei, int strHei, int strWid, bool pad, ACTIVATION actType);
 
 	void CalculateOutputs() override;
-	void SetInputs(std::vector<float> in);
+	void SetInputs(std::vector<float> in) override;
 	std::vector<float> GetOutputs();
 	std::vector<Filter> GetFilters();
 

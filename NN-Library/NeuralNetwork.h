@@ -18,7 +18,7 @@ public:
 	void AddLayer(Layer* layerToAdd);
 
 	/* Sets the inputs for the first layer in the network. */
-	void SetInputs(std::vector<float> inputs);
+	void SetInputs(std::vector<float> in);
 
 	/* Calculates the outputs of the network. */
 	std::vector<float> CalculateOutputs();

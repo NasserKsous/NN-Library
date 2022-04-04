@@ -21,7 +21,7 @@ public:
 	void BackPropagate(std::vector<float> previousBiasCosts, std::vector<float> previousWeightCosts) override;
 
 	/* Sets the inputs for the layer using the inputs passed in. */
-	void SetInputs(std::vector<float> in);
+	void SetInputs(std::vector<float> in) override;
 
 	/* Adjusts the weights and biases using the costs passed in. */
 	void UpdateWeightsAndBiases(std::vector<float> expWeightsCosts, std::vector<float> expBiasesCosts) override;

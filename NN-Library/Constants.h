@@ -31,6 +31,7 @@ public:
 	LAYER_TYPE layerType;
 	int setsOfInputs;
 
+	virtual void SetInputs(std::vector<float> in) {};
 	virtual void CalculateOutputs() {};
 	virtual void BackPropagate(std::vector<float> expectedOutputs) {};
 	virtual void BackPropagate(std::vector<float> previousBiasCosts, std::vector<float> previousWeightCosts) {};
