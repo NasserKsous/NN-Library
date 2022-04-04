@@ -3,6 +3,8 @@
 
 #include <iostream>
 #include <stdlib.h>
+#include <math.h>
+
 #include "ActivationFunctions.h"
 #include "ConnectedLayer.h"
 #include "ConvolutionalLayer.h"
@@ -11,8 +13,6 @@
 
 #include "pbPlots.hpp"
 #include "supportLib.hpp"
-
-#include <math.h>
 
 //Reference for plotting graph: https://github.com/InductiveComputerScience/pbPlots/tree/v0.1.9.0/Cpp
 
@@ -283,7 +283,9 @@ int main()
 								  0.0f, 1.0f, 0.0f,
 								  0.0f, 1.0f, 0.0f };
 
-	ConvolutionalLayer* convLayer = new ConvolutionalLayer(5, 5, 1, input, 3, 3, weight, 1, 1, true, ACTIVATION::RELU);
+	std::vector<Filter> filters = { Filter(3, 3, 1, weight) };
+
+	ConvolutionalLayer* convLayer = new ConvolutionalLayer(5, 5, 1, input, filters, 1, 1, true, ACTIVATION::RELU);
 	convLayer->CalculateOutputs();
 	std::vector<float> outputs = convLayer->GetOutputs();
 	for (int heightIndex = 0; heightIndex < 5; ++heightIndex)
