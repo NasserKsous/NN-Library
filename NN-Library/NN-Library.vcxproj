@@ -145,6 +145,7 @@
     <ClCompile Include="NeuralNetwork.cpp" />
     <ClCompile Include="NN-Library.cpp" />
     <ClCompile Include="pbPlots.cpp" />
+    <ClCompile Include="PoolingLayer.cpp" />
     <ClCompile Include="supportLib.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -154,6 +155,7 @@
     <ClInclude Include="ConvolutionalLayer.h" />
     <ClInclude Include="NeuralNetwork.h" />
     <ClInclude Include="pbPlots.hpp" />
+    <ClInclude Include="PoolingLayer.h" />
     <ClInclude Include="supportLib.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
