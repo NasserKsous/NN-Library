@@ -69,18 +69,15 @@ void ConvolutionalLayer::CalculateOutputs()
 
 	for (Filter filter : filters)
 	{
-		int halfFilterHeight = (int)filter.height / 2;
-		int halfFilterWidth = (int)filter.width / 2;
-
-		int maxHeight = inputHeight - halfFilterHeight - 1;
-		int maxWight = inputWidth - halfFilterWidth - 1;
+		int maxHeight = inputHeight - (filter.height - 1);
+		int maxWidth = inputWidth - (filter.width - 1);
 
 		std::vector<std::vector<float>> outputChannel;
 		std::vector<float> outputRow;
 
-		for (int centreY = halfFilterHeight; centreY <= maxHeight; centreY += strideHeight)
+		for (int inputY = 0; inputY < maxHeight; inputY += strideHeight)
 		{
-			for (int centreX = halfFilterWidth; centreX <= maxWight; centreX += strideWidth)
+			for (int inputX = 0; inputX < maxWidth; inputX += strideWidth)
 			{
 				float output = 0.0f;
 
@@ -90,7 +87,7 @@ void ConvolutionalLayer::CalculateOutputs()
 					{
 						for (int channelIndex = 0; channelIndex < numChannels; ++channelIndex)
 						{
-							output += filter.values[channelIndex][heightIndex][widthIndex] * inputImage[channelIndex][centreY + (heightIndex - halfFilterHeight)][centreX + (widthIndex - halfFilterWidth)];
+							output += filter.values[channelIndex][heightIndex][widthIndex] * inputImage[channelIndex][inputY + (heightIndex)][inputX + (widthIndex)];
 						}
 					}
 				}
