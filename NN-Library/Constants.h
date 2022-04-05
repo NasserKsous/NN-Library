@@ -37,6 +37,7 @@ public:
 	virtual void BackPropagate(std::vector<float> previousBiasCosts, std::vector<float> previousWeightCosts) {};
 	virtual void UpdateWeightsAndBiases(std::vector<float> expWeightsCosts, std::vector<float> expBiasesCosts) {};
 	virtual void ResetValues() {};
+	virtual std::vector<float> GetOutputs() { return std::vector<float>(); };
 	virtual std::vector<float> GetBiasCosts() { return std::vector<float>(); };
 	virtual std::vector<float> GetWeightCosts() { return std::vector<float>(); };
 };

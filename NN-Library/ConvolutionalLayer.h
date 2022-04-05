@@ -41,7 +41,7 @@ public:
 
 	void CalculateOutputs() override;
 	void SetInputs(std::vector<float> in) override;
-	std::vector<float> GetOutputs();
+	std::vector<float> GetOutputs() override;
 	std::vector<Filter> GetFilters();
 
 private:
@@ -49,8 +49,6 @@ private:
 	int inputWidth;
 	int numChannels;
 	int numFilters;
-	int paddingHeight;
-	int paddingWidth;
 	int strideHeight;
 	int strideWidth;
 

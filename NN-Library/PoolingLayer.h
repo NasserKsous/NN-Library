@@ -5,9 +5,9 @@ class PoolingLayer : public Layer
 {
 public:
 	PoolingLayer(int inHei, int inWid, int noChannels, std::vector<float> in, int filHei, int filWid, int strHei, int strWid, bool isMax);
-	void CalculateOutputs();
+	void CalculateOutputs() override;
 	void SetInputs(std::vector<float> in) override;
-	std::vector<float> GetOutputs();
+	std::vector<float> GetOutputs() override;
 
 
 private:

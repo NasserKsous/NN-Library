@@ -13,8 +13,8 @@ ConvolutionalLayer::ConvolutionalLayer(int inHei, int inWid, int noChannels, std
 	activation = actType;
 	layerType = LAYER_TYPE::CONVOLUTIONAL;
 	
-	std::vector<std::vector<float>> inputChannel;
-	std::vector<float> inputRow;
+	/*std::vector<std::vector<float>> inputChannel;
+	std::vector<float> inputRow;*/
 
 	/*for (int channelIndex = 0; channelIndex < numChannels; ++channelIndex)
 	{
@@ -54,6 +54,7 @@ ConvolutionalLayer::ConvolutionalLayer(int inHei, int inWid, int noChannels, std
 		inputChannel.clear();
 	}*/
 	
+	// CHeck the filters have the same number of channels as the input image before adding them to the array of filters.
 	for (Filter weight : wei)
 	{
 		assert((int)weight.channels == numChannels && "Filter is not the correct size");

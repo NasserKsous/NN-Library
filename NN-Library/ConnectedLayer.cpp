@@ -112,6 +112,11 @@ void ConnectedLayer::SetInputs(std::vector<float> in)
 	inputs = in;
 }
 
+std::vector<float> ConnectedLayer::GetOutputs()
+{
+	return outputs;
+}
+
 void ConnectedLayer::UpdateWeightsAndBiases(std::vector<float> expWeightsCosts, std::vector<float> expBiasesCosts)
 {
 	// Initialize the learning rate.
