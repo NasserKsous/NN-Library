@@ -222,7 +222,7 @@ void XOR()
 	nn->AddLayer(cLayer2);
 
 
-	const int iterations = 10000;
+	const int iterations = 100000;
 	std::vector<float> outputs;
 	float cost = 0.0f;
 	std::vector<double> outputCosts(iterations);
@@ -279,7 +279,7 @@ void XOR()
 
 int main()
 {
-	//XOR();
+	XOR();
 
 	//SineWave();
 
@@ -287,7 +287,7 @@ int main()
 
 	float* rgb_image = stbi_loadf("testImage.png", &width, &height, &bpp, 3);*/
 
-	auto dataset = mnist::read_dataset();
+	/*auto dataset = mnist::read_dataset();
 
 	std::cout << "Number of training images = " << dataset.training_images.size() << std::endl;
 	std::cout << "Number of training labels = " << dataset.training_labels.size() << std::endl;
@@ -327,6 +327,6 @@ int main()
 			std::cout << outputs[heightIndex * 5 + widthIndex] << ", ";
 		}
 		std::cout << "\n";
-	}
+	}*/
 	return 0;
 }
