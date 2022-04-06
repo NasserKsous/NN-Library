@@ -104,6 +104,57 @@ std::vector<float> PoolingLayer::GetOutputs()
 	return outputs;
 }
 
+void PoolingLayer::BackPropagate(std::vector<float> previousLayerCosts)
+{
+	std::vector<std::vector<std::vector<float>>> temp(numChannels, std::vector<std::vector<float>>(inputHeight, std::vector<float>(inputWidth)));
+	lossInputImage = temp;
+
+	std::vector<std::vector<float>> outputChannel;
+	std::vector<float> outputRow;
+
+	float output = 0.0f;
+
+	int maxHeight = inputHeight - filterHeight;
+	int maxWidth = inputWidth - filterWidth;
+
+	float max = 0.0f;
+	int count = 0;
+	for (int channelIndex = 0; channelIndex < numChannels; ++channelIndex)
+	{
+		for (int topLeftY = 0; topLeftY <= maxHeight; topLeftY += strideHeight)
+		{
+			for (int topLeftX = 0; topLeftX <= maxWidth; topLeftX += strideWidth)
+			{
+				
+				max = previousLayerCosts[count];
+				BackPropagateMaxPool(topLeftX, topLeftY, channelIndex, max);
+				++count;
+			}
+		}
+	}
+
+	for (int channelIndex = 0; channelIndex < numChannels; ++channelIndex)
+	{
+		for (int heightIndex = 0; heightIndex < inputHeight; ++heightIndex)
+		{
+			for (int widthIndex = 0; widthIndex < inputWidth; ++widthIndex)
+			{
+				lossInput.push_back(lossInputImage[channelIndex][heightIndex][widthIndex]);
+			}
+		}
+	}
+}
+
+std::vector<float> PoolingLayer::GetInputCosts()
+{
+	return lossInput;
+}
+
+void PoolingLayer::ResetValues()
+{
+	lossInput.clear();
+}
+
 float PoolingLayer::MaxPool(int x, int y, int z)
 {
 	float output = -INFINITY;
@@ -117,6 +168,25 @@ float PoolingLayer::MaxPool(int x, int y, int z)
 	}
 
 	return output;
+}
+
+void PoolingLayer::BackPropagateMaxPool(int x, int y, int z, float previousLayerLoss)
+{
+	float max = outputImage[z][y / filterHeight][x / filterWidth];
+	for (int inputY = 0; inputY < filterHeight; ++inputY)
+	{
+		for (int inputX = 0; inputX < filterWidth; ++inputX)
+		{
+			if (inputImage[z][y + inputY][x + inputX] == max)
+			{
+				lossInputImage[z][y + inputY][x + inputX] = previousLayerLoss;
+			}
+			else
+			{
+				lossInputImage[z][y + inputY][x + inputX] = 0.0f;
+			}
+		}
+	}
 }
 
 float PoolingLayer::AveragePool(int x, int y, int z)

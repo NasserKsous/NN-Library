@@ -314,6 +314,40 @@ namespace NeuralNetworkLibrary
 		EXPECT_EQ(expectedOutputs, outputs);
 	}
 
+	TEST_F(ConvolutionalLayerTest, BackPropagation)
+	{
+		testWeights = {	0.0f, 1.0f, 
+						1.0f, 0.0f};
+
+		testFilters = { Filter(2, 2, 1, testWeights) };
+
+		testInputs = {	0.0f, 1.0f, 2.0f, 
+						3.0f, 4.0f, 5.0f,
+						6.0f, 7.0f, 8.0f};
+
+		convLayer = new ConvolutionalLayer(3, 3, 1, testFilters, 1, 1, false, ACTIVATION::RELU);
+		convLayer->SetInputs(testInputs);
+		convLayer->CalculateOutputs();
+		std::vector<float> loss = { 0.1f, 0.2f,
+									0.2f, 0.1f};
+		convLayer->BackPropagate(loss);
+		std::vector<float> inputLoss = convLayer->GetInputCosts();
+		std::vector<float> weightLoss = convLayer->GetWeightCosts();
+
+		std::vector<float> expectedInputLoss = {0.0f, 0.1f, 0.2f,
+												0.1f, 0.4f, 0.1f,
+												0.2f, 0.1f, 0.0f};
+		
+		std::vector<float> expectedWeightLoss = {	1.2f, 1.8f, 
+													3.0f, 3.6f};
+							
+		EXPECT_EQ(expectedInputLoss, inputLoss);
+		EXPECT_FLOAT_EQ(expectedWeightLoss[0], weightLoss[0]);
+		EXPECT_FLOAT_EQ(expectedWeightLoss[1], weightLoss[1]);
+		EXPECT_FLOAT_EQ(expectedWeightLoss[2], weightLoss[2]);
+		EXPECT_FLOAT_EQ(expectedWeightLoss[3], weightLoss[3]);
+	}
+
 	class PoolingLayerTest : public ::testing::Test
 	{
 	protected:
@@ -491,6 +525,30 @@ namespace NeuralNetworkLibrary
 											};
 
 		EXPECT_EQ(expectedOutputs, outputs);
+	}
+
+	TEST_F(PoolingLayerTest, BackPropagation)
+	{
+		testInputs = {	0.0f, 1.0f, 2.0f, 3.0f,
+						4.0f, 5.0f, 6.0f, 7.0f, 
+						8.0f, 9.0f, 10.0f, 11.0f, 
+						12.0f, 13.0f, 14.0f, 15.0f,  };
+		poolLayer = new PoolingLayer(4, 4, 1, testInputs, 2, 2, 2, 2, true);
+		poolLayer->CalculateOutputs();
+
+		std::vector<float> inputLoss = {	1.0f, 2.0f, 
+											3.0f, 4.0f };
+
+		poolLayer->BackPropagate(inputLoss);
+
+		std::vector<float> lossInput = poolLayer->GetInputCosts();
+
+		std::vector<float> expectedLoss = { 0.0f, 0.0f, 0.0f, 0.0f,
+											0.0f, 1.0f, 0.0f, 2.0f,
+											0.0f, 0.0f, 0.0f, 0.0f,
+											0.0f, 3.0f, 0.0f, 4.0f };
+
+		EXPECT_EQ(lossInput, expectedLoss);
 	}
 
 	class NeuralNetworkTest : public ::testing::Test
