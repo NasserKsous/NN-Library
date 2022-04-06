@@ -33,11 +33,12 @@ public:
 
 	virtual void SetInputs(std::vector<float> in) {};
 	virtual void CalculateOutputs() {};
-	virtual void BackPropagate(std::vector<float> expectedOutputs) {};
-	virtual void BackPropagate(std::vector<float> previousBiasCosts, std::vector<float> previousWeightCosts) {};
+	virtual void BackPropagateLastLayer(std::vector<float> expectedOutputs) {};
+	virtual void BackPropagate(std::vector<float> previousLayerCosts) {};
 	virtual void UpdateWeightsAndBiases(std::vector<float> expWeightsCosts, std::vector<float> expBiasesCosts) {};
 	virtual void ResetValues() {};
 	virtual std::vector<float> GetOutputs() { return std::vector<float>(); };
 	virtual std::vector<float> GetBiasCosts() { return std::vector<float>(); };
 	virtual std::vector<float> GetWeightCosts() { return std::vector<float>(); };
+	virtual std::vector<float> GetInputCosts() { return std::vector<float>(); };
 };

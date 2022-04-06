@@ -44,8 +44,14 @@ public:
 	void SetInputs(std::vector<float> in) override;
 	std::vector<float> GetOutputs() override;
 	std::vector<Filter> GetFilters();
+	std::vector<float> GetInputCosts() override;
+	std::vector<float> GetWeightCosts() override;
+	void UpdateWeightsAndBiases(std::vector<float> expWeightsCosts, std::vector<float> expBiasesCosts) override;
 
-	void BackPropagate(std::vector<float> lossOfPreviousLayer, int lossHeight, int lossWidth, int lossChannels);
+	/* Resets the weight and biases costs. */
+	void ResetValues() override;
+
+	void BackPropagate(std::vector<float> lossOfPreviousLayer) override;
 
 private:
 	int inputHeight;
@@ -57,7 +63,9 @@ private:
 
 	std::vector<std::vector<std::vector<float>>> inputImage;
 	std::vector<std::vector<std::vector<float>>> outputImage;
-	std::vector<std::vector<std::vector<float>>> loosInputImage;
+	std::vector<std::vector<std::vector<float>>> lossInputImage;
+	std::vector<float> lossInput;
+	std::vector<float> lossWeight;
 	std::vector<Filter> filters;
 
 	bool hasPadding = false;

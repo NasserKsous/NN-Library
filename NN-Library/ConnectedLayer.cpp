@@ -12,6 +12,8 @@ ConnectedLayer::ConnectedLayer(std::vector<float> in, std::vector<float> wei, st
 	biases = bi;
 	weights = wei;
 	nodes = no;
+
+	layerType = LAYER_TYPE::CONNECTED;
 }
 
 void ConnectedLayer::CalculateOutputs()
@@ -46,7 +48,7 @@ void ConnectedLayer::CalculateOutputs()
 	}
 }
 
-void ConnectedLayer::BackPropagate(std::vector<float> expectedOutputs)
+void ConnectedLayer::BackPropagateLastLayer(std::vector<float> expectedOutputs)
 {
 	// Set the number of weights and the weights per node in the layer.
 	int numberOfWeights = weights.size();
@@ -70,9 +72,11 @@ void ConnectedLayer::BackPropagate(std::vector<float> expectedOutputs)
 			weightsCosts.push_back(weightCost);
 		}
 	}
+
+	CalculateInputCosts();
 }
 
-void ConnectedLayer::BackPropagate(std::vector<float> previousBiasCosts, std::vector<float> previousWeights)
+void ConnectedLayer::BackPropagate(std::vector<float> previousLayerCosts)
 {
 	// Set the number of weights and the weights per node in the layer.
 	int numberOfWeights = weights.size();
@@ -81,21 +85,23 @@ void ConnectedLayer::BackPropagate(std::vector<float> previousBiasCosts, std::ve
 	// For each node in the layer.
 	for (int nodeIndex = 0; nodeIndex < nodes; ++nodeIndex)
 	{
-		// Set the initial cost of the previous layer to 0. 
-		float costOfPrevLayer = 0.0f;
+		//// Set the initial cost of the previous layer to 0. 
+		//float costOfPrevLayer = 0.0f;
 
-		// Set the number of weights per node for the previous layer. 
-		float numOfWeightsPerNode2 = previousWeights.size() / previousBiasCosts.size();
+		//// Set the number of weights per node for the previous layer. 
+		//float numOfWeightsPerNode2 = previousWeights.size() / previousBiasCosts.size();
 
-		// Calculate the cost of the previous layer using cost = previous bias cost * previous weights.
-		for (int i = 0; i < previousBiasCosts.size(); ++i)
-		{
-			costOfPrevLayer += previousBiasCosts[i] * previousWeights[i * numOfWeightsPerNode2 + nodeIndex];
-		}
+		//// Calculate the cost of the previous layer using cost = previous bias cost * previous weights.
+		//for (int i = 0; i < previousBiasCosts.size(); ++i)
+		//{
+		//	costOfPrevLayer += previousBiasCosts[i] * previousWeights[i * numOfWeightsPerNode2 + nodeIndex];
+		//}
+
+		//previousLayerCosts[nodeIndex] = Deactivate(previousLayerCosts[nodeIndex], activation);
 
 		// Calculate the bias cost using cost of previous layer * outputs * (1 - outputs).
 		float outputsCost = outputs[nodeIndex] * (1.0f - outputs[nodeIndex]);
-		float biasCost = costOfPrevLayer * outputsCost;
+		float biasCost = previousLayerCosts[nodeIndex] * outputsCost;
 		biasesCosts.push_back(biasCost);
 
 		//Calculate weight costs using bias cost * inputs.
@@ -104,6 +110,29 @@ void ConnectedLayer::BackPropagate(std::vector<float> previousBiasCosts, std::ve
 			float weightCost = biasCost * inputs[i];
 			weightsCosts.push_back(weightCost);
 		}
+	}
+
+	CalculateInputCosts();
+}
+
+void ConnectedLayer::CalculateInputCosts()
+{
+	int numInputs = inputs.size();
+
+	for (int inputIndex = 0; inputIndex < numInputs; ++inputIndex)
+	{
+		// Set the initial cost of the previous layer to 0. 
+		float costOfPrevLayer = 0.0f;
+
+		// Set the number of weights per node for the previous layer. 
+		float numOfWeightsPerNode2 = weights.size() / biasesCosts.size();
+
+		// Calculate the cost of the previous layer using cost = previous bias cost * previous weights.
+		for (int i = 0; i < biasesCosts.size(); ++i)
+		{
+			costOfPrevLayer += biasesCosts[i] * weights[i * numOfWeightsPerNode2 + inputIndex];
+		}
+		inputsCosts.push_back(costOfPrevLayer);
 	}
 }
 
@@ -144,6 +173,7 @@ void ConnectedLayer::ResetValues()
 	// Clear the bias and weight costs.
 	biasesCosts.clear();
 	weightsCosts.clear();
+	inputsCosts.clear();
 }
 
 std::vector<float> ConnectedLayer::GetBiasCosts()
@@ -154,4 +184,9 @@ std::vector<float> ConnectedLayer::GetBiasCosts()
 std::vector<float> ConnectedLayer::GetWeightCosts()
 {
 	return weightsCosts;
+}
+
+std::vector<float> ConnectedLayer::GetInputCosts()
+{
+	return inputsCosts;
 }

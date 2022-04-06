@@ -66,13 +66,13 @@ void NeuralNetwork::BackPropagate(std::vector<float> expectedOutputs)
 	
 	// Reset the bias and weight values of the last layer and then back propagate to caluclate the new bias and weight costs.
 	Network[numberOfLayers - 1]->ResetValues();
-	Network[numberOfLayers - 1]->BackPropagate(expectedOutputs);
+	Network[numberOfLayers - 1]->BackPropagateLastLayer(expectedOutputs);
 
 	// Repeat this for each layer going back to front in the network.
 	for (int i = numberOfLayers - 2; i >= 0; --i)
 	{
 		Network[i]->ResetValues();
-		Network[i]->BackPropagate(Network[i+1]->GetBiasCosts(), Network[i + 1]->weights);
+		Network[i]->BackPropagate(Network[i+1]->GetInputCosts());
 	}
 
 	// Set the temporary local weights and biases costs.
@@ -212,8 +212,15 @@ void NeuralNetwork::UpdateWeightsAndBiases()
 	// For each layer, find the corresponding weight and biases costs and use them to update the weights and biases.
 	for (int layerIndex = 0; layerIndex < numberOfLayers; ++layerIndex)
 	{
-		int numOfWeights = Network[layerIndex]->weights.size();
-		int numOfBiases = Network[layerIndex]->biases.size();
+		int numOfWeights = 0;
+		int numOfBiases = 0;
+		if (Network[layerIndex]->layerType == LAYER_TYPE::CONNECTED)
+		{
+			numOfWeights = Network[layerIndex]->weights.size();
+			numOfBiases = Network[layerIndex]->biases.size();
+		}
+		
+
 
 		std::vector<float> tempWeights(weightsCosts.cbegin() + weightCount, weightsCosts.cbegin() + weightCount + numOfWeights);
 		std::vector<float> tempBiases(biasesCosts.cbegin() + biasCount, biasesCosts.cbegin() + biasCount + numOfBiases);

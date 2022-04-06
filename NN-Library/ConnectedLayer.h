@@ -15,10 +15,12 @@ public:
 	void CalculateOutputs() override;
 
 	/* Backpropagates the layer using the expected ouputs passed in. */
-	void BackPropagate(std::vector<float> expectedOutputs) override;
+	void BackPropagateLastLayer(std::vector<float> expectedOutputs) override;
 
 	/* Backpropagates the layer using the previous layer's bias costs and weights. */
-	void BackPropagate(std::vector<float> previousBiasCosts, std::vector<float> previousWeightCosts) override;
+	void BackPropagate(std::vector<float> previousLayerCosts) override;
+
+	void CalculateInputCosts();
 
 	/* Sets the inputs for the layer using the inputs passed in. */
 	void SetInputs(std::vector<float> in) override;
@@ -38,9 +40,12 @@ public:
 	/* Returns the weights costs. */
 	std::vector<float> GetWeightCosts() override;
 
+	std::vector<float> GetInputCosts() override;
+
 private:
 
 	std::vector<float> weightsCosts;
 	std::vector<float> biasesCosts;
+	std::vector<float> inputsCosts;
 };
 

@@ -161,9 +161,50 @@ std::vector<Filter> ConvolutionalLayer::GetFilters()
 	return filters;
 }
 
-void ConvolutionalLayer::BackPropagate(std::vector<float> lossOfPreviousLayer, int lossHeight, int lossWidth, int lossChannels)
+std::vector<float> ConvolutionalLayer::GetInputCosts()
 {
+	return lossInput;
+}
 
+std::vector<float> ConvolutionalLayer::GetWeightCosts()
+{
+	return lossWeight;
+}
+
+void ConvolutionalLayer::UpdateWeightsAndBiases(std::vector<float> expWeightsCosts, std::vector<float> expBiasesCosts)
+{
+	// Initialize the learning rate.
+	float learningRate = 0.5f;
+
+	for (int filterIndex = 0; filterIndex < filters.size(); ++filterIndex)
+	{
+		for (int channelIndex = 0; channelIndex < filters[filterIndex].channels; ++channelIndex)
+		{
+			for (int heightIndex = 0; heightIndex < filters[filterIndex].height; ++heightIndex)
+			{
+				for (int widthIndex = 0; widthIndex < filters[filterIndex].width; ++widthIndex)
+				{
+					filters[filterIndex].values[channelIndex][heightIndex][widthIndex] -= filters[filterIndex].lossValues[channelIndex][heightIndex][widthIndex] * learningRate;
+				}
+			}
+		}
+	}
+}
+
+void ConvolutionalLayer::ResetValues()
+{
+	for (int filterIndex = 0; filterIndex < filters.size(); ++filterIndex)
+	{
+		filters[filterIndex].lossValues.clear();
+	}
+	lossInput.clear();
+}
+
+void ConvolutionalLayer::BackPropagate(std::vector<float> lossOfPreviousLayer)
+{
+	int lossChannels = outputImage.size();
+	int lossHeight = outputImage[0].size();
+	int lossWidth = outputImage[0][0].size();
 	std::vector<std::vector<std::vector<float>>> lossImage;
 	std::vector<std::vector<float>> lossChannel;
 	std::vector<float> lossRow;
@@ -187,7 +228,7 @@ void ConvolutionalLayer::BackPropagate(std::vector<float> lossOfPreviousLayer, i
 	std::vector<float> filterRow;
 
 	// Loss for filters
-	for (Filter filter: filters)
+	for (int filterIndex = 0; filterIndex < numFilters; ++filterIndex)
 	{
 		int maxHeight = inputHeight - (lossHeight - 1);
 		int maxWidth = inputWidth - (lossWidth -1);
@@ -202,18 +243,17 @@ void ConvolutionalLayer::BackPropagate(std::vector<float> lossOfPreviousLayer, i
 				{
 					for (int widthIndex = 0; widthIndex < lossWidth; ++widthIndex)
 					{
-						output += lossImage[channelIndex][heightIndex][widthIndex] * inputImage[channelIndex][inputY + (heightIndex)][inputX + (widthIndex)];
+						output += lossImage[filterIndex][heightIndex][widthIndex] * inputImage[filterIndex][inputY + (heightIndex)][inputX + (widthIndex)];
 					}
 				}
+				lossWeight.push_back(output);
 				filterRow.push_back(output);
 			}
 			filterChannel.push_back(filterRow);
 			filterRow.clear();
 		}
-		filter.lossValues.push_back(filterChannel);
+		filters[filterIndex].lossValues.push_back(filterChannel);
 		filterChannel.clear();
-
-		++channelIndex;
 	}
 
 
@@ -234,10 +274,12 @@ void ConvolutionalLayer::BackPropagate(std::vector<float> lossOfPreviousLayer, i
 			}
 		}
 
+		int startY = 0 - filter.height + 1;
+		int startX = 0 - filter.width + 1;
 
-		for (int inputY = 0; inputY < lossHeight; inputY += strideHeight)
+		for (int inputY = startY; inputY < lossHeight; inputY += strideHeight)
 		{
-			for (int inputX = 0; inputX < lossWidth; inputX += strideWidth)
+			for (int inputX = startX; inputX < lossWidth; inputX += strideWidth)
 			{
 				float output = 0.0f;
 
@@ -245,17 +287,18 @@ void ConvolutionalLayer::BackPropagate(std::vector<float> lossOfPreviousLayer, i
 				{
 					for (int widthIndex = 0; widthIndex < filter.width; ++widthIndex)
 					{
-						if (heightIndex >= lossHeight || widthIndex >= lossWidth)
+						if (heightIndex + inputY >= lossHeight || widthIndex + inputX >= lossWidth || heightIndex + inputY < 0 || widthIndex + inputX < 0)
 							continue;
-						output += filter.values[channelIndex][heightIndex][widthIndex] * inputImage[channelIndex][inputY + (heightIndex)][inputX + (widthIndex)];
+						output += filter.values[channelIndex][heightIndex][widthIndex] * lossImage[channelIndex][inputY + (heightIndex)][inputX + (widthIndex)];
 					}
 				}
+				lossInput.push_back(output);
 				filterRow.push_back(output);
 			}
 			filterChannel.push_back(filterRow);
 			filterRow.clear();
 		}
-		loosInputImage.push_back(filterChannel);
+		lossInputImage.push_back(filterChannel);
 		filterChannel.clear();
 
 		++channelIndex;
