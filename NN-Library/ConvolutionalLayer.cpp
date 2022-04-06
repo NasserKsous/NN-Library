@@ -160,3 +160,107 @@ std::vector<Filter> ConvolutionalLayer::GetFilters()
 {
 	return filters;
 }
+
+void ConvolutionalLayer::BackPropagate(std::vector<float> lossOfPreviousLayer, int lossHeight, int lossWidth, int lossChannels)
+{
+
+	std::vector<std::vector<std::vector<float>>> lossImage;
+	std::vector<std::vector<float>> lossChannel;
+	std::vector<float> lossRow;
+	for (int channelIndex = 0; channelIndex < lossChannels; ++channelIndex)
+	{
+		for (int heightIndex = 0; heightIndex < lossHeight; ++heightIndex)
+		{
+			for (int widthIndex = 0; widthIndex < lossWidth; ++widthIndex)
+			{
+				lossRow.push_back(lossOfPreviousLayer[channelIndex * (lossHeight*lossWidth) + (heightIndex * lossWidth) + widthIndex]);
+			}
+			lossChannel.push_back(lossRow);
+			lossRow.clear();
+		}
+		lossImage.push_back(lossChannel);
+		lossChannel.clear();
+	}
+
+	int channelIndex = 0;
+	std::vector<std::vector<float>> filterChannel;
+	std::vector<float> filterRow;
+
+	// Loss for filters
+	for (Filter filter: filters)
+	{
+		int maxHeight = inputHeight - (lossHeight - 1);
+		int maxWidth = inputWidth - (lossWidth -1);
+
+		for (int inputY = 0; inputY < maxHeight; inputY += strideHeight)
+		{
+			for (int inputX = 0; inputX < maxWidth; inputX += strideWidth)
+			{
+				float output = 0.0f;
+
+				for (int heightIndex = 0; heightIndex < lossHeight; ++heightIndex)
+				{
+					for (int widthIndex = 0; widthIndex < lossWidth; ++widthIndex)
+					{
+						output += lossImage[channelIndex][heightIndex][widthIndex] * inputImage[channelIndex][inputY + (heightIndex)][inputX + (widthIndex)];
+					}
+				}
+				filterRow.push_back(output);
+			}
+			filterChannel.push_back(filterRow);
+			filterRow.clear();
+		}
+		filter.lossValues.push_back(filterChannel);
+		filterChannel.clear();
+
+		++channelIndex;
+	}
+
+
+	//Loss for inputs
+	std::vector<Filter> transposedFilters = filters;
+	for (Filter filter : transposedFilters)
+	{
+		std::vector<std::vector<std::vector<float>>> tempValues = filter.values;
+
+		for (int channelIndex = 0; channelIndex < filter.channels; ++channelIndex)
+		{
+			for (int heightIndex = 0; heightIndex < filter.height; ++heightIndex)
+			{
+				for (int widthIndex = 0; widthIndex < filter.width; ++widthIndex)
+				{
+					filter.values[channelIndex][heightIndex][widthIndex] = tempValues[numChannels - 1 - channelIndex][filter.height - 1 - heightIndex][filter.width - 1 - widthIndex];
+				}
+			}
+		}
+
+
+		for (int inputY = 0; inputY < lossHeight; inputY += strideHeight)
+		{
+			for (int inputX = 0; inputX < lossWidth; inputX += strideWidth)
+			{
+				float output = 0.0f;
+
+				for (int heightIndex = 0; heightIndex < filter.height; ++heightIndex)
+				{
+					for (int widthIndex = 0; widthIndex < filter.width; ++widthIndex)
+					{
+						if (heightIndex >= lossHeight || widthIndex >= lossWidth)
+							continue;
+						output += filter.values[channelIndex][heightIndex][widthIndex] * inputImage[channelIndex][inputY + (heightIndex)][inputX + (widthIndex)];
+					}
+				}
+				filterRow.push_back(output);
+			}
+			filterChannel.push_back(filterRow);
+			filterRow.clear();
+		}
+		loosInputImage.push_back(filterChannel);
+		filterChannel.clear();
+
+		++channelIndex;
+	}
+
+
+	//Reference for backprop: https://pavisj.medium.com/convolutions-and-backpropagations-46026a8f5d2c
+}

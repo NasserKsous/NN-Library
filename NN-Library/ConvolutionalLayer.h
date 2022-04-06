@@ -8,6 +8,7 @@ struct Filter
 	int width;
 	int channels;
 	std::vector<std::vector<std::vector<float>>> values;
+	std::vector<std::vector<std::vector<float>>> lossValues;
 
 	Filter(int hei, int wid, int cha, std::vector<float> wei)
 	{
@@ -44,6 +45,8 @@ public:
 	std::vector<float> GetOutputs() override;
 	std::vector<Filter> GetFilters();
 
+	void BackPropagate(std::vector<float> lossOfPreviousLayer, int lossHeight, int lossWidth, int lossChannels);
+
 private:
 	int inputHeight;
 	int inputWidth;
@@ -54,6 +57,7 @@ private:
 
 	std::vector<std::vector<std::vector<float>>> inputImage;
 	std::vector<std::vector<std::vector<float>>> outputImage;
+	std::vector<std::vector<std::vector<float>>> loosInputImage;
 	std::vector<Filter> filters;
 
 	bool hasPadding = false;
