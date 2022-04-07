@@ -155,7 +155,7 @@ std::vector<float> ConnectedLayer::GetOutputs()
 void ConnectedLayer::UpdateWeightsAndBiases(std::vector<float> expWeightsCosts, std::vector<float> expBiasesCosts)
 {
 	// Initialize the learning rate.
-	float learningRate = 0.5f;
+	float learningRate = 0.1f;
 
 	// Set the number of weights and biases.
 	int numOfWeights = expWeightsCosts.size();

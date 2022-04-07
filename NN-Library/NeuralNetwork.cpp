@@ -214,11 +214,9 @@ void NeuralNetwork::UpdateWeightsAndBiases()
 	{
 		int numOfWeights = 0;
 		int numOfBiases = 0;
-		if (Network[layerIndex]->layerType == LAYER_TYPE::CONNECTED)
-		{
-			numOfWeights = Network[layerIndex]->weights.size();
-			numOfBiases = Network[layerIndex]->biases.size();
-		}
+
+		numOfWeights = Network[layerIndex]->weights.size();
+		numOfBiases = Network[layerIndex]->biases.size();
 		
 
 

@@ -18,7 +18,10 @@ ConvolutionalLayer::ConvolutionalLayer(int inHei, int inWid, int noChannels, std
 	{
 		assert((int)weight.channels == numChannels && "Filter is not the correct size");
 		filters.push_back(weight);
+		std::vector<float> temp(weight.channels * weight.height * weight.width);
+		weights.insert(std::end(weights), std::begin(temp), std::end(temp));
 	}
+
 }
 
 void ConvolutionalLayer::CalculateOutputs()
@@ -133,7 +136,7 @@ std::vector<float> ConvolutionalLayer::GetWeightCosts()
 void ConvolutionalLayer::UpdateWeightsAndBiases(std::vector<float> expWeightsCosts, std::vector<float> expBiasesCosts)
 {
 	// Initialize the learning rate.
-	float learningRate = 0.5f;
+	float learningRate = 0.1f;
 
 	int count = 0;
 
@@ -160,6 +163,7 @@ void ConvolutionalLayer::ResetValues()
 		filters[filterIndex].lossValues.clear();
 	}
 	lossInput.clear();
+	lossWeight.clear();
 }
 
 void ConvolutionalLayer::BackPropagate(std::vector<float> lossOfPreviousLayer)
