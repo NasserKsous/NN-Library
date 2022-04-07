@@ -347,13 +347,13 @@ void MNIST()
 	}
 	std::vector<float> biases2(10);
 
-	ConnectedLayer* layer2 = new ConnectedLayer(tempInputs3, weights, biases2, 10, ACTIVATION::SOFTMAX);
+	//ConnectedLayer* layer2 = new ConnectedLayer(tempInputs3, weights, biases2, 10, ACTIVATION::SOFTMAX);
 
-	/*nn->AddLayer(convLayer);
+	nn->AddLayer(convLayer);
 	nn->AddLayer(poolLayer);
-	nn->AddLayer(layer);*/
+	nn->AddLayer(layer);
 
-	nn->AddLayer(layer2);
+	//nn->AddLayer(layer2);
 
 	int iterations = 1000;
 	std::vector<float> inputs;
