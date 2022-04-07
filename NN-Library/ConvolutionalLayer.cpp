@@ -189,8 +189,14 @@ void ConvolutionalLayer::BackPropagate(std::vector<float> lossOfPreviousLayer)
 	// Loss for filters
 	for (int filterIndex = 0; filterIndex < numFilters; ++filterIndex)
 	{
-		int maxHeight = inputHeight - (lossHeight - 1);
-		int maxWidth = inputWidth - (lossWidth -1);
+		int maxHeight = inputHeight - lossHeight;
+		int maxWidth = inputWidth - lossWidth;
+
+		if (!hasPadding)
+		{
+			maxHeight++;
+			maxWidth++;
+		}
 
 		for (int inputChannelIndex = 0; inputChannelIndex < numChannels; ++inputChannelIndex)
 		{
@@ -204,7 +210,7 @@ void ConvolutionalLayer::BackPropagate(std::vector<float> lossOfPreviousLayer)
 					{
 						for (int widthIndex = 0; widthIndex < lossWidth; ++widthIndex)
 						{
-							output += lossImage[filterIndex][heightIndex][widthIndex] * inputImage[channelIndex][inputY + (heightIndex)][inputX + (widthIndex)];
+							output += lossImage[filterIndex][heightIndex][widthIndex] * inputImage[inputChannelIndex][inputY + (heightIndex)][inputX + (widthIndex)];
 						}
 					}
 					lossWeight.push_back(output);

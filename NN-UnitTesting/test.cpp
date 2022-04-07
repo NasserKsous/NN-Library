@@ -340,8 +340,10 @@ namespace NeuralNetworkLibrary
 		
 		std::vector<float> expectedWeightLoss = {	1.2f, 1.8f, 
 													3.0f, 3.6f};
-							
-		EXPECT_EQ(expectedInputLoss, inputLoss);
+		for (int i = 0; i < 9; ++i)
+		{
+			EXPECT_FLOAT_EQ(expectedInputLoss[i], inputLoss[i]);
+		}
 		for (int i = 0; i < 4; ++i)
 		{
 			EXPECT_FLOAT_EQ(expectedWeightLoss[i], weightLoss[i]);
@@ -384,7 +386,15 @@ namespace NeuralNetworkLibrary
 
 		std::vector<float> expectedInputLoss = {0.0f, 0.1f, 0.2f,
 												0.1f, 0.4f, 0.1f,
-												0.2f, 0.1f, 0.0f}; /// Sort this out
+												0.2f, 0.1f, 0.0f,
+		
+												0.1f, 0.2f, 0.0f, 
+												0.3f, 0.3f, 0.0f,
+												0.2f, 0.1f, 0.0f,
+		
+												0.1f, 0.2f, 0.0f,
+												0.2f, 0.2f, 0.2f,
+												0.0f, 0.2f, 0.1f}; /// Sort this out
 		
 		std::vector<float> expectedWeightLoss = {	1.2f, 1.8f, 
 													3.0f, 3.6f,
@@ -396,7 +406,85 @@ namespace NeuralNetworkLibrary
 													13.8f, 14.4f};
 							
 		EXPECT_EQ(expectedInputLoss, inputLoss);
-		for (int i = 0; i < 4; ++i)
+		for (int i = 0; i < 12; ++i)
+		{
+			EXPECT_FLOAT_EQ(expectedWeightLoss[i], weightLoss[i]);
+		}
+	}
+	
+	TEST_F(ConvolutionalLayerTest, BackPropagationWithMultipleChannelsAndMultipleFilters)
+	{
+		testWeights = {	0.0f, 1.0f, 
+						1.0f, 0.0f,
+		
+						1.0f, 0.0f,
+						1.0f, 0.0f,
+		
+						1.0f, 0.0f,
+						0.0f, 1.0f};
+
+		std::vector<float> testWeights2 = { 1.0f, 1.0f,
+											0.0f, 0.0f,
+
+											0.0f, 1.0f,
+											0.0f, 1.0f,
+
+											0.0f, 0.0f,
+											1.0f, 1.0f };
+
+		testFilters = { Filter(2, 2, 3, testWeights), Filter(2, 2, 3, testWeights2) };
+
+		testInputs = {	0.0f, 1.0f, 2.0f, 
+						3.0f, 4.0f, 5.0f,
+						6.0f, 7.0f, 8.0f,
+		
+						9.0f, 10.0f, 11.0f,
+						12.0f, 13.0f, 14.0f,
+						15.0f, 16.0f, 17.0f,
+		
+						18.0f, 19.0f, 20.0f,
+						21.0f, 22.0f, 23.0f,
+						24.0f, 25.0f, 26.0f};
+
+		convLayer = new ConvolutionalLayer(3, 3, 3, testFilters, 1, 1, false, ACTIVATION::RELU);
+		convLayer->SetInputs(testInputs);
+		convLayer->CalculateOutputs();
+		std::vector<float> loss = { 0.1f, 0.2f,
+									0.2f, 0.1f,
+		
+									0.1f, 0.2f,
+									0.3f, 0.4f};
+		convLayer->BackPropagate(loss);
+		std::vector<float> inputLoss = convLayer->GetInputCosts();
+		std::vector<float> weightLoss = convLayer->GetWeightCosts();
+
+		std::vector<float> expectedInputLoss = {0.1f, 0.4f, 0.4f,
+												0.4f, 1.1f, 0.5f,
+												0.2f, 0.1f, 0.0f,
+		
+												0.1f, 0.3f, 0.2f, 
+												0.3f, 0.7f, 0.6f,
+												0.2f, 0.4f, 0.4f,
+		
+												0.1f, 0.2f, 0.0f,
+												0.3f, 0.5f, 0.4f,
+												0.3f, 0.9f, 0.5f}; /// Sort this out
+		
+		std::vector<float> expectedWeightLoss = {	1.2f, 1.8f, 
+													3.0f, 3.6f,
+												
+													6.6f, 7.2f,
+													8.4f, 9.0f,
+		
+													12.0f, 12.6f,
+													13.8f, 14.4f};
+			
+		for (int i = 0; i < 27; ++i)
+		{
+			EXPECT_FLOAT_EQ(expectedInputLoss[i], inputLoss[i]);
+		}
+		
+		for (int i = 0; i < 12; ++i)
 		{
 			EXPECT_FLOAT_EQ(expectedWeightLoss[i], weightLoss[i]);
 		}
