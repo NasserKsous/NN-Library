@@ -62,6 +62,18 @@ namespace NeuralNetworkLibrary
 		EXPECT_EQ(0.0f, LeakyReLUActivation(input2));
 		EXPECT_EQ(1.5f, LeakyReLUActivation(input3));
 	}
+	
+	TEST_F(ActivationsTests, SoftmaxActivation)
+	{
+		std::vector<float> inputs = { 1.0f, 4.2f, 0.6f, 1.23f, 4.3f, 1.2f, 2.5f };
+		std::vector<float> outputs = ActivateArray(inputs);
+		std::vector<float> expectedOutputs = { 0.01659f, 0.406995f, 0.011121f, 0.020880f, 0.449799f, 0.020263f, 0.07435f };
+
+		for (int i = 0; i < 7; ++i)
+		{
+			EXPECT_FLOAT_EQ(outputs[i], expectedOutputs[i]);
+		}
+	}
 
 	class ConnectedLayerTest : public ::testing::Test
 	{

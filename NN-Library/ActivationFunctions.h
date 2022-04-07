@@ -18,6 +18,7 @@ static inline float ReLUDeactivation(float x) { return (x >= 0) ? x : 0.0f; }
 static inline float LeakyReLUDeactivation(float x) { return (x >= 0) ? x : 10.0f*x; }
 
 float Activate(float x, ACTIVATION type);
+std::vector<float> ActivateArray(std::vector<float> inputs);
 float Deactivate(float x, ACTIVATION type);
 
 //class ActivationFunction

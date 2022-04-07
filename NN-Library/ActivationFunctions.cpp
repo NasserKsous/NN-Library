@@ -42,6 +42,33 @@ float Activate(float x, ACTIVATION type)
 	return 0.0f;
 }
 
+std::vector<float> ActivateArray(std::vector<float> inputs)
+{
+	int i;
+	float m, sum, constant;
+	float size = inputs.size();
+	std::vector<float> outputs;
+
+	m = -INFINITY;
+	for (i = 0; i < size; ++i) {
+		if (m < inputs[i]) {
+			m = inputs[i];
+		}
+	}
+
+	sum = 0.0;
+	for (i = 0; i < size; ++i) {
+		sum += expf(inputs[i] - m);
+	}
+
+	constant = m + logf(sum);
+	for (i = 0; i < size; ++i) {
+		outputs.push_back(expf(inputs[i] - constant));
+	}
+
+	return outputs;
+}
+
 float Deactivate(float x, ACTIVATION type)
 {
 	switch (type)
