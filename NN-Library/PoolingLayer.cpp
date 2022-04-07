@@ -42,6 +42,9 @@ void PoolingLayer::CalculateOutputs()
 	std::vector<std::vector<float>> outputChannel;
 	std::vector<float> outputRow;
 
+	outputImage.clear();
+	outputs.clear();
+
 	float output = 0.0f;
 
 	int maxHeight = inputHeight - filterHeight;
