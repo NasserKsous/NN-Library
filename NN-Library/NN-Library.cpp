@@ -10,6 +10,7 @@
 #include "ActivationFunctions.h"
 #include "ConnectedLayer.h"
 #include "ConvolutionalLayer.h"
+#include "PoolingLayer.h"
 #include "NeuralNetwork.h"
 #include "Constants.h"
 
@@ -291,26 +292,69 @@ void MNIST()
 	std::cout << "Number of training labels = " << dataset.training_labels.size() << std::endl;
 	std::cout << "Number of test images = " << dataset.test_images.size() << std::endl;
 	std::cout << "Number of test labels = " << dataset.test_labels.size() << std::endl;
-
-	for (int i = 0; i < 28; ++i)
+	std::cout << "\n\n";
+	/*for (int i = 0; i < 28; ++i)
 	{
 		for (int j = 0; j < 28; ++j)
 		{
 			std::cout << (float)dataset.test_images[0][i * 28 + j] << "   ";
 		}
 		std::cout << "\n";
-	}
+	}*/
 
-
-	NeuralNetwork* nn = new NeuralNetwork();
-
+	int batchSize = 150;
+	NeuralNetwork* nn = new NeuralNetwork(batchSize);
+	srand(time(NULL));
 	std::vector<float> weights;
 	std::vector<Filter> filters;
+	double temp = 2.0 / 676.0;
+	double variance = sqrt(temp);
+	std::normal_distribution<double> distribution(0.0, variance);
+	std::default_random_engine gen;
+	float randomWeight = (float)distribution(gen);
+	float randomWeight2 = (float)distribution(gen);
 
-	std::normal_distribution<float> distribution;
-	float randomWeight = distribution(0.0f, sqrtf(2 / 9));
+	for (int j = 0; j < 6; ++j)
+	{
+		for (int i = 0; i < 25; ++i)
+		{
+			weights.push_back((float)distribution(gen));
+		}
+		Filter filter(5, 5, 1, weights);
+		filters.push_back(filter);
+		weights.clear();
+	}
 
-	int batchSize = 50;
+	ConvolutionalLayer* convLayer = new ConvolutionalLayer(28, 28, 1, filters, 1, 1, false, ACTIVATION::RELU);
+
+	std::vector<float> tempInputs(24 * 24 * 6);
+	PoolingLayer* poolLayer = new PoolingLayer(24, 24, 6, tempInputs, 3, 3, 3, 3, true);
+
+	std::vector<float> tempInputs2(8*8*6);
+	for (int i = 0; i < 8*8*6*10; ++i)
+	{
+		weights.push_back((float)distribution(gen));
+	}
+	std::vector<float> biases(10);
+
+	ConnectedLayer* layer = new ConnectedLayer(tempInputs2, weights, biases, 10, ACTIVATION::SOFTMAX);
+
+	std::vector<float> tempInputs3(784);
+	weights.clear();
+	for (int i = 0; i < 784 * 10; ++i)
+	{
+		weights.push_back((float)distribution(gen));
+	}
+	std::vector<float> biases2(10);
+
+	ConnectedLayer* layer2 = new ConnectedLayer(tempInputs3, weights, biases2, 10, ACTIVATION::SOFTMAX);
+
+	/*nn->AddLayer(convLayer);
+	nn->AddLayer(poolLayer);
+	nn->AddLayer(layer);*/
+
+	nn->AddLayer(layer2);
+
 	int iterations = 1000;
 	std::vector<float> inputs;
 	int sizeOfImages = dataset.training_images[0].size();
@@ -333,7 +377,7 @@ void MNIST()
 			int expectedOutput = dataset.training_labels[randomIndex];
 			for (int j = 0; j < 10; ++j)
 			{
-				if (j == expectedOutput - 1)
+				if (j == expectedOutput)
 				{
 					expectedOutputs.push_back(1.0f);
 				}
@@ -349,12 +393,80 @@ void MNIST()
 
 		outputCosts[i] = cost;
 		outputIterations[i] = double(i + 1.0);
-		std::cout << "\nCost = " << cost << "\n\n";
+		std::cout << "\n Iteration = " << i + 1 << ", Cost = " << cost << "\n\n";
 
 		expectedOutputs.clear();
 		inputs.clear();
 	}
 
+	for (int j = 0; j < sizeOfImages; ++j)
+	{
+		inputs.push_back(dataset.test_images[0][j] / 255.0f);
+	}
+
+	int expectedOutput = dataset.test_labels[0];
+	for (int j = 0; j < 10; ++j)
+	{
+		if (j == expectedOutput)
+		{
+			expectedOutputs.push_back(1.0f);
+		}
+		else
+		{
+			expectedOutputs.push_back(0.0f);
+		}
+	}
+	nn->SetInputs(inputs);
+	nn->CalculateOutputs();
+	std::vector<float> outputs = nn->CalculateOutputs();
+	int out = 0;
+	for (int i = 0; i < outputs.size(); ++i)
+	{
+		if (outputs[i] > 0.9f)
+		{
+			out = i;
+			break;
+		}
+	}
+	std::cout << "Output = " << out << ", Expected Output = " << expectedOutput << "\n";
+
+	numberOfImages = dataset.test_images.size();
+
+	for (int k = 0; k < 100; ++k)
+	{
+		int randomIndex = rand() % numberOfImages;
+
+		inputs.clear();
+		for (int j = 0; j < sizeOfImages; ++j)
+		{
+			inputs.push_back(dataset.test_images[randomIndex][j] / 255.0f);
+		}
+
+		expectedOutput = dataset.test_labels[randomIndex];
+		for (int j = 0; j < 10; ++j)
+		{
+			if (j == expectedOutput)
+			{
+				expectedOutputs.push_back(1.0f);
+			}
+			else
+			{
+				expectedOutputs.push_back(0.0f);
+			}
+		}
+		nn->SetInputs(inputs);
+		nn->CalculateOutputs();
+		outputs = nn->CalculateOutputs();
+		for (int i = 0; i < outputs.size(); ++i)
+		{
+			if (outputs[i] > 0.9f)
+			{
+				out = i;
+				break;
+			}
+		}
+		std::cout << "Output = " << out << ", Expected Output = " << expectedOutput << "\n";
+	}
 
 	PlotGraph(outputIterations, outputCosts, "MNIST-CostOverTime.png");
 
