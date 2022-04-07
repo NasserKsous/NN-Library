@@ -41,10 +41,16 @@ void ConnectedLayer::CalculateOutputs()
 		nodeOutput += biases[nodeIndex];
 
 		// Calculate the final output after passing it in the activation function.
-		nodeOutput = Activate(nodeOutput, activation);
+		if (activation != ACTIVATION::SOFTMAX)
+			nodeOutput = Activate(nodeOutput, activation);
 
 		// Place this node output the list of outputs for the layer.
 		outputs.push_back(nodeOutput);
+	}
+
+	if (activation == ACTIVATION::SOFTMAX)
+	{
+		outputs = ActivateArray(outputs);
 	}
 }
 

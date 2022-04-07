@@ -135,6 +135,8 @@ void ConvolutionalLayer::UpdateWeightsAndBiases(std::vector<float> expWeightsCos
 	// Initialize the learning rate.
 	float learningRate = 0.5f;
 
+	int count = 0;
+
 	for (int filterIndex = 0; filterIndex < filters.size(); ++filterIndex)
 	{
 		for (int channelIndex = 0; channelIndex < filters[filterIndex].channels; ++channelIndex)
@@ -143,7 +145,8 @@ void ConvolutionalLayer::UpdateWeightsAndBiases(std::vector<float> expWeightsCos
 			{
 				for (int widthIndex = 0; widthIndex < filters[filterIndex].width; ++widthIndex)
 				{
-					filters[filterIndex].values[channelIndex][heightIndex][widthIndex] -= filters[filterIndex].lossValues[channelIndex][heightIndex][widthIndex] * learningRate;
+					filters[filterIndex].values[channelIndex][heightIndex][widthIndex] -= expWeightsCosts[count] * learningRate;
+					++count;
 				}
 			}
 		}

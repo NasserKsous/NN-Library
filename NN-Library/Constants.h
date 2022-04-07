@@ -9,7 +9,8 @@ enum class ACTIVATION
 	SIGMOID,
 	TANH,
 	RELU,
-	LEAKY_RELU
+	LEAKY_RELU,
+	SOFTMAX
 };
 
 enum class LAYER_TYPE

@@ -21,6 +21,8 @@
 
 #include "mnist/mnist_reader_less.hpp"
 
+#include <random>
+
 //Reference for plotting graph: https://github.com/InductiveComputerScience/pbPlots/tree/v0.1.9.0/Cpp
 
 //Reference for MNIST reading: https://github.com/wichtounet/mnist
@@ -277,17 +279,13 @@ void XOR()
 	system("XOR-CostOverTime.png");
 }
 
-int main()
+void MNIST()
 {
-	XOR();
-
-	//SineWave();
-
 	/*int width, height, bpp;
 
 	float* rgb_image = stbi_loadf("testImage.png", &width, &height, &bpp, 3);*/
 
-	/*auto dataset = mnist::read_dataset();
+	auto dataset = mnist::read_dataset();
 
 	std::cout << "Number of training images = " << dataset.training_images.size() << std::endl;
 	std::cout << "Number of training labels = " << dataset.training_labels.size() << std::endl;
@@ -303,30 +301,73 @@ int main()
 		std::cout << "\n";
 	}
 
-	std::vector<float> input = { 0.0f, 1.0f, 2.0f, 3.0f, 4.0f, 
-								 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 
-								 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 
-								 15.0f, 16.0f, 17.0f, 18.0f, 19.0f, 
-								 20.0f, 21.0f, 22.0f, 23.0f, 24.0f };
-	
-	
-	std::vector<float> weight = { 0.0f, 1.0f, 0.0f,  
-								  0.0f, 1.0f, 0.0f,
-								  0.0f, 1.0f, 0.0f };
 
-	std::vector<Filter> filters = { Filter(3, 3, 1, weight) };
+	NeuralNetwork* nn = new NeuralNetwork();
 
-	ConvolutionalLayer* convLayer = new ConvolutionalLayer(5, 5, 1, filters, 1, 1, true, ACTIVATION::RELU);
-	convLayer->SetInputs(input);
-	convLayer->CalculateOutputs();
-	std::vector<float> outputs = convLayer->GetOutputs();
-	for (int heightIndex = 0; heightIndex < 5; ++heightIndex)
+	std::vector<float> weights;
+	std::vector<Filter> filters;
+
+	std::normal_distribution<float> distribution;
+	float randomWeight = distribution(0.0f, sqrtf(2 / 9));
+
+	int batchSize = 50;
+	int iterations = 1000;
+	std::vector<float> inputs;
+	int sizeOfImages = dataset.training_images[0].size();
+	int numberOfImages = dataset.training_images.size();
+	std::vector<float> expectedOutputs;
+	std::vector<double> outputCosts(iterations);
+	std::vector<double> outputIterations(iterations);
+
+	for (int i = 0; i < iterations; ++i)
 	{
-		for (int widthIndex = 0; widthIndex < 5; ++widthIndex)
+		float cost = 0.0f;
+
+		for (int i = 0; i < batchSize; ++i)
 		{
-			std::cout << outputs[heightIndex * 5 + widthIndex] << ", ";
+			int randomIndex = rand() % numberOfImages;
+			for (int j = 0; j < sizeOfImages; ++j)
+			{
+				inputs.push_back(dataset.training_images[randomIndex][j] / 255.0f);
+			}
+			int expectedOutput = dataset.training_labels[randomIndex];
+			for (int j = 0; j < 10; ++j)
+			{
+				if (j == expectedOutput - 1)
+				{
+					expectedOutputs.push_back(1.0f);
+				}
+				else
+				{
+					expectedOutputs.push_back(0.0f);
+				}
+			}
 		}
-		std::cout << "\n";
-	}*/
+
+		nn->TrainNetwork(inputs, expectedOutputs);
+		cost = nn->GetCost();
+
+		outputCosts[i] = cost;
+		outputIterations[i] = double(i + 1.0);
+		std::cout << "\nCost = " << cost << "\n\n";
+
+		expectedOutputs.clear();
+		inputs.clear();
+	}
+
+
+	PlotGraph(outputIterations, outputCosts, "MNIST-CostOverTime.png");
+
+	system("MNIST-CostOverTime.png");
+}
+
+int main()
+{
+	//XOR();
+
+	//SineWave();
+
+	MNIST();
+	
 	return 0;
 }
