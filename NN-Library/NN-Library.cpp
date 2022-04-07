@@ -431,7 +431,7 @@ void MNIST()
 	std::cout << "Output = " << out << ", Expected Output = " << expectedOutput << "\n";
 
 	numberOfImages = dataset.test_images.size();
-
+	int correctCount = 0;
 	for (int k = 0; k < 100; ++k)
 	{
 		int randomIndex = rand() % numberOfImages;
@@ -457,17 +457,21 @@ void MNIST()
 		nn->SetInputs(inputs);
 		nn->CalculateOutputs();
 		outputs = nn->CalculateOutputs();
-		for (int i = 0; i < outputs.size(); ++i)
+		int max = 0;
+		for (int i = 1; i < outputs.size(); ++i)
 		{
-			if (outputs[i] > 0.9f)
+			if (outputs[i] > outputs[max])
 			{
-				out = i;
-				break;
+				max = i;
 			}
 		}
+		out = max;
+		if (out == expectedOutput)
+			++correctCount;
 		std::cout << "Output = " << out << ", Expected Output = " << expectedOutput << "\n";
 	}
 
+	std::cout << "Number of correct tests = " << correctCount;
 	PlotGraph(outputIterations, outputCosts, "MNIST-CostOverTime.png");
 
 	system("MNIST-CostOverTime.png");
