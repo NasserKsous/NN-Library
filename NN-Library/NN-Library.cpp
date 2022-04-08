@@ -302,7 +302,7 @@ void MNIST()
 		std::cout << "\n";
 	}*/
 
-	int iterations = 5000;
+	int iterations = 1000;
 	int batchSize = 150;
 	NeuralNetwork* nn = new NeuralNetwork(batchSize);
 	srand(time(NULL));
@@ -432,7 +432,8 @@ void MNIST()
 
 	numberOfImages = dataset.test_images.size();
 	int correctCount = 0;
-	for (int k = 0; k < 100; ++k)
+	int testIterations = 1000;
+	for (int k = 0; k < testIterations; ++k)
 	{
 		int randomIndex = rand() % numberOfImages;
 
@@ -471,7 +472,7 @@ void MNIST()
 		std::cout << "Output = " << out << ", Expected Output = " << expectedOutput << "\n";
 	}
 
-	std::cout << "Number of correct tests = " << correctCount;
+	std::cout << "Number of correct tests = " << correctCount << "/" << testIterations << "\n";
 	PlotGraph(outputIterations, outputCosts, "MNIST-CostOverTime.png");
 
 	system("MNIST-CostOverTime.png");
