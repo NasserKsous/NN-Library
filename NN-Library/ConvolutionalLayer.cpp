@@ -233,10 +233,8 @@ void ConvolutionalLayer::BackPropagate(std::vector<float> lossOfPreviousLayer)
 
 
 	//Loss for inputs
-	std::vector<std::vector<std::vector<float>>> temp(numChannels, std::vector<std::vector<float>>(inputHeight, std::vector<float>(inputWidth)));
-	std::vector<float> temp2(numChannels * inputHeight * inputWidth);
-	lossInputImage = temp;
-	lossInput = temp2;
+	std::vector<float> temp(numChannels * inputHeight * inputWidth);
+	lossInput = temp;
 
 	std::vector<Filter> transposedFilters = filters;
 	for (Filter filter : transposedFilters)

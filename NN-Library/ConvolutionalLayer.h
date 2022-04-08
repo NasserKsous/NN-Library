@@ -63,7 +63,6 @@ private:
 
 	std::vector<std::vector<std::vector<float>>> inputImage;
 	std::vector<std::vector<std::vector<float>>> outputImage;
-	std::vector<std::vector<std::vector<float>>> lossInputImage;
 	std::vector<float> lossInput;
 	std::vector<float> lossWeight;
 	std::vector<Filter> filters;
