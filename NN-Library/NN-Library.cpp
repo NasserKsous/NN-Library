@@ -302,6 +302,7 @@ void MNIST()
 		std::cout << "\n";
 	}*/
 
+	int iterations = 5000;
 	int batchSize = 150;
 	NeuralNetwork* nn = new NeuralNetwork(batchSize);
 	srand(time(NULL));
@@ -355,7 +356,6 @@ void MNIST()
 
 	//nn->AddLayer(layer2);
 
-	int iterations = 1000;
 	std::vector<float> inputs;
 	int sizeOfImages = dataset.training_images[0].size();
 	int numberOfImages = dataset.training_images.size();
