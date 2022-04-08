@@ -45,8 +45,11 @@ float Activate(float x, ACTIVATION type)
 std::vector<float> ActivateArray(std::vector<float> inputs)
 {
 	int i;
+
+	std::vector<double> doubleInput;
+	
 	float m, sum, constant;
-	float size = inputs.size();
+	int size = inputs.size();
 	std::vector<float> outputs;
 
 	m = -INFINITY;
