@@ -91,20 +91,6 @@ void ConnectedLayer::BackPropagate(std::vector<float> previousLayerCosts)
 	// For each node in the layer.
 	for (int nodeIndex = 0; nodeIndex < nodes; ++nodeIndex)
 	{
-		//// Set the initial cost of the previous layer to 0. 
-		//float costOfPrevLayer = 0.0f;
-
-		//// Set the number of weights per node for the previous layer. 
-		//float numOfWeightsPerNode2 = previousWeights.size() / previousBiasCosts.size();
-
-		//// Calculate the cost of the previous layer using cost = previous bias cost * previous weights.
-		//for (int i = 0; i < previousBiasCosts.size(); ++i)
-		//{
-		//	costOfPrevLayer += previousBiasCosts[i] * previousWeights[i * numOfWeightsPerNode2 + nodeIndex];
-		//}
-
-		//previousLayerCosts[nodeIndex] = Deactivate(previousLayerCosts[nodeIndex], activation);
-
 		// Calculate the bias cost using cost of previous layer * outputs * (1 - outputs).
 		float outputsCost = outputs[nodeIndex] * (1.0f - outputs[nodeIndex]);
 		float biasCost = previousLayerCosts[nodeIndex] * outputsCost;
