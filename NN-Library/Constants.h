@@ -27,10 +27,10 @@ public:
 	std::vector<float> outputs;
 	std::vector<float> weights;
 	std::vector<float> biases;
-	int nodes;
-	ACTIVATION activation;
-	LAYER_TYPE layerType;
-	int setsOfInputs;
+	int nodes = 0;
+	ACTIVATION activation = ACTIVATION::LINEAR;
+	LAYER_TYPE layerType = LAYER_TYPE::CONNECTED;
+	int setsOfInputs = 0;
 
 	virtual void SetInputs(std::vector<float> in) {};
 	virtual void CalculateOutputs() {};

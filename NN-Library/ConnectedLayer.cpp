@@ -117,12 +117,12 @@ void ConnectedLayer::CalculateInputCosts()
 		float costOfPrevLayer = 0.0f;
 
 		// Set the number of weights per node for the previous layer. 
-		float numOfWeightsPerNode2 = weights.size() / biasesCosts.size();
+		int numOfWeightsPerNode2 = weights.size() / biasesCosts.size();
 
 		// Calculate the cost of the previous layer using cost = previous bias cost * previous weights.
 		for (int i = 0; i < biasesCosts.size(); ++i)
 		{
-			costOfPrevLayer += biasesCosts[i] * weights[i * numOfWeightsPerNode2 + inputIndex];
+			costOfPrevLayer += biasesCosts[i] * weights[i * (float)numOfWeightsPerNode2 + inputIndex];
 		}
 		inputsCosts.push_back(costOfPrevLayer);
 	}
