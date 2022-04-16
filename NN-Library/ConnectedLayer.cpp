@@ -102,7 +102,7 @@ void ConnectedLayer::BackPropagate(std::vector<float> previousLayerCosts)
 			float weightCost = biasCost * inputs[i];
 			weightsCosts.push_back(weightCost);
 		}
-	}
+	} 
 
 	CalculateInputCosts();
 }
@@ -138,11 +138,8 @@ std::vector<float> ConnectedLayer::GetOutputs()
 	return outputs;
 }
 
-void ConnectedLayer::UpdateWeightsAndBiases(std::vector<float> expWeightsCosts, std::vector<float> expBiasesCosts)
+void ConnectedLayer::UpdateWeightsAndBiases(std::vector<float> expWeightsCosts, std::vector<float> expBiasesCosts, float learningRate)
 {
-	// Initialize the learning rate.
-	float learningRate = 0.1f;
-
 	// Set the number of weights and biases.
 	int numOfWeights = expWeightsCosts.size();
 	int numOfBiases = expBiasesCosts.size();

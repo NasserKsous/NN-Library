@@ -36,7 +36,7 @@ public:
 	virtual void CalculateOutputs() {};
 	virtual void BackPropagateLastLayer(std::vector<float> expectedOutputs) {};
 	virtual void BackPropagate(std::vector<float> previousLayerCosts) {};
-	virtual void UpdateWeightsAndBiases(std::vector<float> expWeightsCosts, std::vector<float> expBiasesCosts) {};
+	virtual void UpdateWeightsAndBiases(std::vector<float> expWeightsCosts, std::vector<float> expBiasesCosts, float learningRate) {};
 	virtual void ResetValues() {};
 	virtual std::vector<float> GetOutputs() { return std::vector<float>(); };
 	virtual std::vector<float> GetBiasCosts() { return std::vector<float>(); };

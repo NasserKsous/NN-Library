@@ -29,7 +29,7 @@ public:
 	std::vector<float> GetOutputs() override;
 
 	/* Adjusts the weights and biases using the costs passed in. */
-	void UpdateWeightsAndBiases(std::vector<float> expWeightsCosts, std::vector<float> expBiasesCosts) override;
+	void UpdateWeightsAndBiases(std::vector<float> expWeightsCosts, std::vector<float> expBiasesCosts, float learningRate) override;
 
 	/* Resets the weight and biases costs. */
 	void ResetValues() override;

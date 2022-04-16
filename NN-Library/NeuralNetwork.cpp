@@ -223,7 +223,7 @@ void NeuralNetwork::UpdateWeightsAndBiases()
 		std::vector<float> tempWeights(weightsCosts.cbegin() + weightCount, weightsCosts.cbegin() + weightCount + numOfWeights);
 		std::vector<float> tempBiases(biasesCosts.cbegin() + biasCount, biasesCosts.cbegin() + biasCount + numOfBiases);
 
-		Network[layerIndex]->UpdateWeightsAndBiases(tempWeights, tempBiases);
+		Network[layerIndex]->UpdateWeightsAndBiases(tempWeights, tempBiases, 0.1f);
 
 		weightCount += numOfWeights;
 		biasCount += numOfBiases;

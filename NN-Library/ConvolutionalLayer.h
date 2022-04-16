@@ -46,7 +46,7 @@ public:
 	std::vector<Filter> GetFilters();
 	std::vector<float> GetInputCosts() override;
 	std::vector<float> GetWeightCosts() override;
-	void UpdateWeightsAndBiases(std::vector<float> expWeightsCosts, std::vector<float> expBiasesCosts) override;
+	void UpdateWeightsAndBiases(std::vector<float> expWeightsCosts, std::vector<float> expBiasesCosts, float learningRate) override;
 
 	/* Resets the weight and biases costs. */
 	void ResetValues() override;

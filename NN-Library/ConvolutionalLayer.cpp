@@ -133,11 +133,8 @@ std::vector<float> ConvolutionalLayer::GetWeightCosts()
 	return lossWeight;
 }
 
-void ConvolutionalLayer::UpdateWeightsAndBiases(std::vector<float> expWeightsCosts, std::vector<float> expBiasesCosts)
+void ConvolutionalLayer::UpdateWeightsAndBiases(std::vector<float> expWeightsCosts, std::vector<float> expBiasesCosts, float learningRate)
 {
-	// Initialize the learning rate.
-	float learningRate = 0.1f;
-
 	int count = 0;
 
 	for (int filterIndex = 0; filterIndex < filters.size(); ++filterIndex)
@@ -273,17 +270,10 @@ void ConvolutionalLayer::BackPropagate(std::vector<float> lossOfPreviousLayer)
 							output += filter.values[filterChannelIndex][heightIndex][widthIndex] * lossImage[channelIndex][inputY + (heightIndex)][inputX + (widthIndex)];
 						}
 					}
-					/*lossInputImage[filterChannelIndex][inputY / strideHeight][inputX / strideWidth] += output;*/
 					lossInput[count] += output;
 					++count;
-					/*lossInput.push_back(output);
-					filterRow.push_back(output);*/
 				}
-				/*filterChannel.push_back(filterRow);
-				filterRow.clear();*/
 			}
-			/*lossInputImage.push_back(filterChannel);
-			filterChannel.clear();*/
 		}
 		++channelIndex;
 	}
