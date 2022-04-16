@@ -112,11 +112,6 @@ void PoolingLayer::BackPropagate(std::vector<float> previousLayerCosts)
 	std::vector<std::vector<std::vector<float>>> temp(numChannels, std::vector<std::vector<float>>(inputHeight, std::vector<float>(inputWidth)));
 	lossInputImage = temp;
 
-	std::vector<std::vector<float>> outputChannel;
-	std::vector<float> outputRow;
-
-	float output = 0.0f;
-
 	int maxHeight = inputHeight - filterHeight;
 	int maxWidth = inputWidth - filterWidth;
 
