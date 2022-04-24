@@ -9,7 +9,7 @@
 #include "../NN-Library/ConvolutionalLayer.cpp"
 #include "../NN-Library/PoolingLayer.h"
 #include "../NN-Library/PoolingLayer.cpp"
-//Incase of intellisense issues open test options then close and reopen the solution
+//Incase of intellisense issues close and reopen the solution
 
 namespace NeuralNetworkLibrary
 {

@@ -6,6 +6,7 @@
 #include <stdint.h>
 #include <fstream>
 #include <math.h>
+#include <chrono>
 
 #include "ActivationFunctions.h"
 #include "ConnectedLayer.h"
@@ -225,13 +226,15 @@ void XOR()
 	nn->AddLayer(cLayer2);
 
 
-	const int iterations = 100000;
+	const int iterations = 500000;
 	std::vector<float> outputs;
 	float cost = 0.0f;
 	std::vector<double> outputCosts(iterations);
 	std::vector<double> outputIterations(iterations);
 
 	std::vector<float> expectedOutputs;
+
+	auto start = std::chrono::steady_clock::now();
 
 	for (int i = 0; i < iterations; ++i)
 	{
@@ -247,6 +250,8 @@ void XOR()
 		outputs = nn->GetOutputs();
 		std::cout << "\nCost = " << cost << "\n\n";
 	}
+
+	auto end = std::chrono::steady_clock::now();
 
 	std::vector<float> input = { 0.0f, 0.0f };
 	nn->SetInputs(input);
@@ -274,6 +279,8 @@ void XOR()
 	outputs = nn->CalculateOutputs();
 
 	std::cout << "Output = " << outputs[0] << "\n\n";
+
+	std::cout << "Time taken to train: " << std::chrono::duration_cast<std::chrono::seconds>(end - start).count() << " seconds\n\n";
 
 	PlotGraph(outputIterations, outputCosts, "XOR-CostOverTime.png");
 
@@ -363,6 +370,8 @@ void MNIST()
 	std::vector<double> outputCosts(iterations);
 	std::vector<double> outputIterations(iterations);
 
+	auto start = std::chrono::steady_clock::now();
+
 	for (int i = 0; i < iterations; ++i)
 	{
 		float cost = 0.0f;
@@ -398,6 +407,8 @@ void MNIST()
 		expectedOutputs.clear();
 		inputs.clear();
 	}
+
+	auto end = std::chrono::steady_clock::now();
 
 	for (int j = 0; j < sizeOfImages; ++j)
 	{
@@ -472,7 +483,10 @@ void MNIST()
 		std::cout << "Output = " << out << ", Expected Output = " << expectedOutput << "\n";
 	}
 
-	std::cout << "Number of correct tests = " << correctCount << "/" << testIterations << "\n";
+	std::cout << "\nNumber of correct tests = " << correctCount << "/" << testIterations << "\n";
+
+	std::cout << "Time taken to train: " << std::chrono::duration_cast<std::chrono::seconds>(end - start).count() << " seconds\n\n";
+
 	PlotGraph(outputIterations, outputCosts, "MNIST-CostOverTime.png");
 
 	system("MNIST-CostOverTime.png");
