@@ -57,153 +57,6 @@ void PlotGraph(std::vector<double> x, std::vector<double> y, std::string fileNam
 	}
 }
 
-void SineWave()
-{
-	srand(time(NULL));
-
-	std::vector<float> testInputs = { 0.0f };
-	std::vector<float> testWeights;
-	testWeights.clear();
-	for (int i = 0; i < 10; ++i)
-	{
-		float upper = 1.0f / sqrtf(1);
-		float lower = 0.0f;
-		int randomInt = (rand() % 1000);
-		float tempWeight = (lower + randomInt * (upper - lower)) / 1000.0f;
-		testWeights.push_back(tempWeight);
-	}
-	std::vector<float> testBiases = { 0.5f };
-	testBiases.clear();
-	for (int i = 0; i < 10; ++i)
-	{
-		float tempBias = 0.01;
-		testBiases.push_back(tempBias);
-	}
-	int testNodes = 10;
-	ACTIVATION testActivation = ACTIVATION::SIGMOID;
-	ConnectedLayer* cLayer = new ConnectedLayer(testInputs, testWeights, testBiases, testNodes, testActivation);
-
-	testInputs = { 0.0f };
-	testWeights.clear();
-	for (int i = 0; i < 25*testNodes; ++i)
-	{
-		float upper = 1.0f / sqrtf(testNodes);
-		float lower = 0.0f;
-		int randomInt = (rand() % 1000);
-		float tempWeight = (lower + randomInt * (upper - lower)) / 1000.0f;
-		testWeights.push_back(tempWeight);
-	}
-	testBiases.clear();
-	for (int i = 0; i < 25; ++i)
-	{
-		float tempBias = 0.01f;
-		testBiases.push_back(tempBias);
-	}
-	testNodes = 25;
-	testActivation = ACTIVATION::SIGMOID;
-	ConnectedLayer* cLayer2 = new ConnectedLayer(testInputs, testWeights, testBiases, testNodes, testActivation);
-
-	testInputs = { 0.0f };
-	testWeights.clear();
-	for (int i = 0; i < 25 * testNodes; ++i)
-	{
-		float upper = 1.0f / sqrtf(testNodes);
-		float lower = 0.0f;
-		int randomInt = (rand() % 1000);
-		float tempWeight = (lower + randomInt * (upper - lower)) / 1000.0f;
-		testWeights.push_back(tempWeight);
-	}
-	testBiases.clear();
-	for (int i = 0; i < 25; ++i)
-	{
-		float tempBias = 0.01f;
-		testBiases.push_back(tempBias);
-	}
-	testNodes = 25;
-	testActivation = ACTIVATION::SIGMOID;
-	ConnectedLayer* cLayer3 = new ConnectedLayer(testInputs, testWeights, testBiases, testNodes, testActivation);
-	
-	testInputs = { 0.0f };
-	testWeights.clear();
-	for (int i = 0; i < testNodes; ++i)
-	{
-		float upper = 1.0f / sqrtf(testNodes);
-		float lower = -(1.0f / sqrtf(testNodes));
-		int randomInt = (rand() % 1000) - 500;
-		float tempWeight = (lower + randomInt * (upper - lower)) / 1000.0f;
-		testWeights.push_back(tempWeight);
-	}
-	testBiases = { 0.01f };
-	testNodes = 1;
-	testActivation = ACTIVATION::TANH;
-	ConnectedLayer* cLayer4 = new ConnectedLayer(testInputs, testWeights, testBiases, testNodes, testActivation);
-
-	int sets = 400;
-	NeuralNetwork* nn = new NeuralNetwork(sets);
-	nn->AddLayer(cLayer);
-	nn->AddLayer(cLayer2);
-	nn->AddLayer(cLayer3);
-	nn->AddLayer(cLayer4);
-
-	const int iterations = 1000;
-	std::vector<float> outputs;
-	float cost = 0.0f;
-	std::vector<double> outputCosts(iterations);
-	std::vector<double> outputIterations(iterations);
-
-	std::vector<float> expectedOutputs;
-
-	testInputs.clear();
-	expectedOutputs.clear();
-	float tempIter = 180.0f / sets;
-	float tempInput = 0.0f;
-	for (int setIndex = 0; setIndex < sets; ++setIndex)
-	{
-		tempInput += tempIter;
-		testInputs.push_back(tempInput);
-		expectedOutputs.push_back(sinf(tempInput * (M_PI/180.0f)));
-
-	}
-
-	for (int i = 0; i < iterations; ++i)
-	{
-		cost = 0.0f;
-
-		nn->TrainNetwork(testInputs, expectedOutputs);
-		cost = nn->GetCost();
-
-		outputCosts[i] = cost;
-		outputIterations[i] = double(i + 1.0);
-		outputs = nn->GetOutputs();
-		std::cout << "\nCost = " << cost << "\n\n";
-	}
-
-	std::vector<float> input = { 0.0f };
-	nn->SetInputs(input);
-	nn->CalculateOutputs();
-	outputs = nn->CalculateOutputs();
-
-	std::cout << "Output = " << outputs[0] << "\n\n";
-	
-	input = { 90.0f };
-	nn->SetInputs(input);
-	nn->CalculateOutputs();
-	outputs = nn->CalculateOutputs();
-
-	std::cout << "Output = " << outputs[0] << "\n\n";
-	
-	input = { 180.0f };
-	nn->SetInputs(input);
-	nn->CalculateOutputs();
-	outputs = nn->CalculateOutputs();
-
-	std::cout << "Output = " << outputs[0] << "\n\n";
-
-	PlotGraph(outputIterations, outputCosts, "SINE-CostOverTime.png");
-
-	system("SINE-CostOverTime.png");
-}
-
 void XOR()
 {
 	std::vector<float> testInputs = { 0.0f, 0.0f };
@@ -257,28 +110,28 @@ void XOR()
 	nn->SetInputs(input);
 	outputs = nn->CalculateOutputs();
 
-	std::cout << "Output = " << outputs[0] << "\n\n";
+	std::cout << "Inputs: " << input[0] << ", " << input[1] << " and Output = " << outputs[0] << "\n\n";
 
 	input = { 0.0f, 1.0f };
 	nn->SetInputs(input);
 	nn->CalculateOutputs();
 	outputs = nn->CalculateOutputs();
 
-	std::cout << "Output = " << outputs[0] << "\n\n";
+	std::cout << "Inputs: " << input[0] << ", " << input[1] << " and Output = " << outputs[0] << "\n\n";
 
 	input = { 1.0f, 0.0f };
 	nn->SetInputs(input);
 	nn->CalculateOutputs();
 	outputs = nn->CalculateOutputs();
 
-	std::cout << "Output = " << outputs[0] << "\n\n";
+	std::cout << "Inputs: " << input[0] << ", " << input[1] << " and Output = " << outputs[0] << "\n\n";
 
 	input = { 1.0f, 1.0f };
 	nn->SetInputs(input);
 	nn->CalculateOutputs();
 	outputs = nn->CalculateOutputs();
 
-	std::cout << "Output = " << outputs[0] << "\n\n";
+	std::cout << "Inputs: " << input[0] << ", " << input[1] << " and Output = " << outputs[0] << "\n\n";
 
 	std::cout << "Time taken to train: " << std::chrono::duration_cast<std::chrono::seconds>(end - start).count() << " seconds\n\n";
 
@@ -494,11 +347,23 @@ void MNIST()
 
 int main()
 {
-	//XOR();
+	int choice = 0;
 
-	//SineWave();
+	std::cout << "1 for XOR or 2 for MNIST:";
+	std::cin >> choice;
 
-	MNIST();
+	switch (choice)
+	{
+	case 1:
+		XOR();
+		break;
+	case 2:
+		MNIST();
+		break;
+	default:
+		std::cout << "Nothing has been selected";
+		break;
+	}
 	
 	return 0;
 }
