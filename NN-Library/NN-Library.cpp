@@ -57,7 +57,7 @@ void PlotGraph(std::vector<double> x, std::vector<double> y, std::string fileNam
 	}
 }
 
-void XOR()
+void XOR(int iterations)
 {
 	std::vector<float> testInputs = { 0.0f, 0.0f };
 	std::vector<float> testWeights = { 0.2f, 0.8f, 0.4f, 0.6f };
@@ -79,7 +79,7 @@ void XOR()
 	nn->AddLayer(cLayer2);
 
 
-	const int iterations = 500000;
+	//const int iterations = 500000;
 	std::vector<float> outputs;
 	float cost = 0.0f;
 	std::vector<double> outputCosts(iterations);
@@ -140,7 +140,7 @@ void XOR()
 	system("XOR-CostOverTime.png");
 }
 
-void MNIST()
+void MNIST(int iterations)
 {
 	/*int width, height, bpp;
 
@@ -162,7 +162,7 @@ void MNIST()
 		std::cout << "\n";
 	}*/
 
-	int iterations = 1000;
+	//int iterations = 1000;
 	int batchSize = 150;
 	NeuralNetwork* nn = new NeuralNetwork(batchSize);
 	srand(time(NULL));
@@ -208,13 +208,9 @@ void MNIST()
 	}
 	std::vector<float> biases2(10);
 
-	//ConnectedLayer* layer2 = new ConnectedLayer(tempInputs3, weights, biases2, 10, ACTIVATION::SOFTMAX);
-
 	nn->AddLayer(convLayer);
 	nn->AddLayer(poolLayer);
 	nn->AddLayer(layer);
-
-	//nn->AddLayer(layer2);
 
 	std::vector<float> inputs;
 	int sizeOfImages = dataset.training_images[0].size();
@@ -348,17 +344,22 @@ void MNIST()
 int main()
 {
 	int choice = 0;
+	int iterations = 0;
 
 	std::cout << "1 for XOR or 2 for MNIST:";
 	std::cin >> choice;
+	
+	std::cout << "Number of training iterations (recommended 500,000 for XOR and 1,000 for MNIST):";
+	std::cin >> iterations;
+
 
 	switch (choice)
 	{
 	case 1:
-		XOR();
+		XOR(iterations);
 		break;
 	case 2:
-		MNIST();
+		MNIST(iterations);
 		break;
 	default:
 		std::cout << "Nothing has been selected";

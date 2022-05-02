@@ -12,15 +12,3 @@ static inline float LeakyReLUActivation(float x) { return (x >= 0) ? x : 0.1f*x;
 
 float Activate(float x, ACTIVATION type);
 std::vector<float> ActivateArray(std::vector<float> inputs);
-//class ActivationFunction
-//{
-//public:
-//	ActivationFunction(ACTIVATION type);
-//	ActivationFunction(ACTIVATION type, float a);
-//
-//	float Activate(float x, ACTIVATION type);
-//
-//private:
-//	ACTIVATION activationType;
-//	float alpha;
-//};
